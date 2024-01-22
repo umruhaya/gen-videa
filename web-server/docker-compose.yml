@@ -1,0 +1,13 @@
+services:
+  web-server:
+    build: .
+    command: uvicorn app.main:app --reload
+    develop:
+      watch:
+        - action: sync
+          path: .
+          target: usr/src/app
+          ignore:
+            - __pycache__
+        - action: rebuild
+          path: requirements.txt
