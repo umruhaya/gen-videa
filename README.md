@@ -48,7 +48,7 @@ Contributions are welcome in several areas of the project, primarily in AI noteb
 
 1. Clone the repositiory (if you havent):
 ```bash
-git clone https://github.com/Jetrr/gen-video
+git clone <the-current-repo-link-here>
 ```
 
 or just simply pull changes to sync your local working directory with the remote repository
