@@ -48,7 +48,14 @@ Contributions are welcome in several areas of the project, primarily in AI noteb
 
 1. Clone the repositiory (if you havent):
 ```bash
-git clone <the-current-repo-link-here>
+git clone repo-link local-directory_name
+```
+
+if you don't provide a `local-directory_name` it will default to the repo name. if you already have created an empty folder. you can
+```bash
+cd your-folder-name
+# dot mean to clone contents of repo in current empty directory
+git clone https://github.com/BlockchainFreak/gen-videa .
 ```
 
 or just simply pull changes to sync your local working directory with the remote repository
