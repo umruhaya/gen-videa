@@ -17,6 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       BASE_GCS_PATH: gs://static-web-pages/${{ github.ref_name }}
+      GCP_PROJECT_ID: jetrr-vision
 
     steps:
       - name: Checkout repository
