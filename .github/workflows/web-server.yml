@@ -10,6 +10,8 @@ on:
     paths:
       - web-server/**
 
+  workflow_dispatch:
+
 jobs:
   DockerImagePushAndDeploy:
     runs-on: ubuntu-latest
