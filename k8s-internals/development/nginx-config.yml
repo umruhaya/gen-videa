@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+  namespace: development
+data:
+  nginx.conf: |
+    server {
+      listen       80;
+      server_name  localhost;
+
+      location = / {
+        proxy_pass https://storage.googleapis.com/static-web-pages/development/index.html;
+        proxy_set_header Host storage.googleapis.com;
+      }
+
+      location / {
+        proxy_pass https://storage.googleapis.com/static-web-pages/development/;
+        proxy_set_header Host storage.googleapis.com;
+      }
+    }
