@@ -22,6 +22,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          project_id: ${{ env.GCP_PROJECT_ID }}
+          export_default_credentials: true
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
@@ -38,10 +45,7 @@ jobs:
         run: pnpm astro build
         working-directory: web-client
 
-      - name: Upload to GCS
-        uses: google-github-actions/upload-cloud-storage@v2
-        with:
-          credentials: ${{ secrets.GCP_SA_KEY }}
-          source: web-client/dist
-          destination: ${{ env.BASE_GCS_PATH }}
-          args: --recursive
+      - name: Upload to GCS using gsutil
+        run: |
+          echo "Uploading to $BASE_GCS_PATH"
+          gsutil -m cp -r web-client/dist/* $BASE_GCS_PATH
