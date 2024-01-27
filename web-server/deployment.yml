@@ -15,8 +15,8 @@ spec:
         app: web-server
     spec:
       nodeSelector:
-        # can only be scheduled on a node that belongs to a `general_node_pool` node pool 
-        cloud.google.com/gke-nodepool: general_node_pool
+        # can only be scheduled on a node that belongs to a `general-node-pool` node pool 
+        cloud.google.com/gke-nodepool: general-node-pool
       containers:
       - name: web-server
         image: to-be-templated-by-yq-in-workflow
