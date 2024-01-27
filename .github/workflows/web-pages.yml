@@ -1,0 +1,45 @@
+name: Compile and Upload Static Web Pages
+
+on:
+  push:
+    branches:
+      - development
+      - staging
+      - production
+
+    paths:
+      - web-client/**
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    env:
+      BASE_GCS_PATH: gs://static-web-pages/${{ github.ref_name }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20" # Set this to the Node.js version you need
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+        working-directory: web-client
+
+      - name: Build Astro project
+        run: pnpm astro build
+        working-directory: web-client
+
+      - name: Upload to GCS
+        uses: google-github-actions/upload-cloud-storage@v2
+        with:
+          credentials: ${{ secrets.GCP_SA_KEY }}
+          source: web-client/dist
+          destination: ${{ env.BASE_GCS_PATH }}
+          args: --recursive
