@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-server
+  labels:
+    app: web-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web-server
+  template:
+    metadata:
+      labels:
+        app: web-server
+    spec:
+      nodeSelector:
+        # can only be scheduled on a node that belongs to a `general_node_pool` node pool 
+        cloud.google.com/gke-nodepool: general_node_pool
+      containers:
+      - name: web-server
+        image: to-be-templated-by-yq-in-workflow
+        env:
+        - name: ENV
+          value: evironment
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /etc/secret/sa-keyfile
+        - name: PORT
+          value: "8080"
+      #   volumeMounts:
+      #   - name: secret-volume
+      #     mountPath: "/etc/secret"
+      #     readOnly: true
+      # volumes:
+      # - name: secret-volume
+      #   secret:
+      #     secretName: sa-keyfile

@@ -1,13 +1,15 @@
 services:
   web-server:
     build: .
-    command: uvicorn app.main:app --reload
-    develop:
-      watch:
-        - action: sync
-          path: .
-          target: usr/src/app
-          ignore:
-            - __pycache__
-        - action: rebuild
-          path: requirements.txt
+    command: uvicorn app.main:app --host 0.0.0.0 --reload
+    ports:
+      - "8000:8000"
+    # develop:
+    #   watch:
+    #     - action: sync
+    #       path: .
+    #       target: usr/src/app
+    #       ignore:
+    #         - __pycache__
+    #     - action: rebuild
+    #       path: requirements.txt
