@@ -1,0 +1,7 @@
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: api-genvidea-com-cert
+spec:
+  domains:
+    - api.genvidea.com
