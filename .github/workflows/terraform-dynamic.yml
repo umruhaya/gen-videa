@@ -1,4 +1,4 @@
-name: 'Terraform'
+name: "Terraform"
 
 on:
   push:
@@ -9,6 +9,8 @@ on:
 
     paths:
       - cloud-infrastructure/dynamic-environments/**
+
+  workflow_dispatch:
 
 jobs:
   terraform:

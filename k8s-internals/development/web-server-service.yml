@@ -4,6 +4,7 @@ metadata:
   name: web-server-service
   labels:
     app: web-server
+  namespace: development
 spec:
   selector:
     app: web-server
