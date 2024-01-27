@@ -39,4 +39,4 @@ This command starts a development environment in Docker. File changes are synchr
 ## Contributing
 Please adhere to the following guidelines when contributing to the project:
 - Develop features on a separate branch.
-- Always submit a Pull Request (PR) for merging your changes into the main branch.
+- Always submit a Pull Request (PR) for merging your changes into the development branch.

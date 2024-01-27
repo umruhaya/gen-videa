@@ -8,7 +8,7 @@ on:
       - production
 
     paths:
-      - cloud-infrastructure/dynamic-environments
+      - cloud-infrastructure/dynamic-environments/**
 
 jobs:
   terraform:
