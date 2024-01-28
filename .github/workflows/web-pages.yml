@@ -35,7 +35,7 @@ jobs:
         with:
           node-version: "20" # Set this to the Node.js version you need
 
-      - name: Install pnpm
+      - name: Install pnpm  
         run: npm install -g pnpm
 
       - name: Install dependencies
@@ -48,7 +48,8 @@ jobs:
 
       - name: Upload to GCS using gsutil
         run: |
-          echo "Activating service account with keyfile at path $GOOGLE_APPLICATION_CREDENTIALS"
-          gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
-          echo "Uploading to $BASE_GCS_PATH"
-          gsutil -m cp -r web-client/dist/* $BASE_GCS_PATH
+          echo ${{ secrets.GCP_SA_KEY }} > /tmp/gcp-key.json
+          gcloud auth activate-service-account --key-file=/tmp/gcp-key.json
+          echo "Uploading to {$BASE_GCS_PATH}"
+          gsutil -m cp -r dist/* $BASE_GCS_PATH
+        working-directory: web-client
