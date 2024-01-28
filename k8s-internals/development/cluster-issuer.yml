@@ -6,3 +6,4 @@ metadata:
 spec:
   domains:
     - api.genvidea.com
+    - web.genvidea.com
