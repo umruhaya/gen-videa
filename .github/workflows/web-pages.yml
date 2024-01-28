@@ -48,5 +48,7 @@ jobs:
 
       - name: Upload to GCS using gsutil
         run: |
+          echo "Activating service account with keyfile at path $GOOGLE_APPLICATION_CREDENTIALS"
+          gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
           echo "Uploading to $BASE_GCS_PATH"
           gsutil -m cp -r web-client/dist/* $BASE_GCS_PATH
