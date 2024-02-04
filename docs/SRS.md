@@ -49,6 +49,10 @@ Prepared by Group 6
 [x] Instructor and Assigned TA are added as collaborator.
 [x] Github Boards are setup.
 
+Github Board: https://github.com/users/BlockchainFreak/projects/2/views/1
+
+Github Repo: https://github.com/BlockchainFreak/gen-videa
+
 ## 2 Overall Description
 
 ### 2.1 Product Perspective
@@ -71,9 +75,14 @@ The product is positioned to fill a niche in the digital content creation market
 
 ### 2.3 Users and Characteristics
 
-* Content Creators: Professionals or hobbyists looking to produce or enhance video content with minimal effort. They value the platform's ease of use and the quality of AI-generated enhancements.
-* Individuals Seeking Quick Enhancements: Users in need of rapid video improvements for personal or professional use, benefiting from automated features like video narration and AI-driven effects.
-* Creative and Recreational Users: Individuals exploring the platform for entertainment or to experiment with AI-generated video content, likely to engage with community features like content sharing.
+Most Important Users:
+
+* Content Creators: Professionals or hobbyists looking to produce or enhance video content with minimal effort. They value the platform's ease of use and the quality of AI-generated enhancements. They are crucial because they are likely to be paying customers and generate revenue for the platform. Meeting their needs and ensuring the platform's ease of use and high-quality AI enhancements should be a top priority.
+* Individuals Seeking Quick Enhancements: Users in need of rapid video improvements for personal or professional use, benefiting from automated features like video narration and AI-driven effects. These users are important because they represent a significant user base. Automated features should be optimized to cater to their needs and provide a positive user experience.
+
+Less Important Users:
+
+* Creative and Recreational Users: Individuals exploring the platform for entertainment or to experiment with AI-generated video content, likely to engage with community features like content sharing. While these users are valuable for community engagement and may contribute to content sharing and user-generated content, they may not be as directly tied to revenue generation. Their needs should still be considered but may not take precedence over the primary user groups.
 
 ### 2.4 Assumptions
 
@@ -252,3 +261,15 @@ User Content Privacy | As a user, I want the option to be able to view the publi
         </tr>
     </tbody>
 </table>
+
+
+### Appendix B – Contribution Statement
+
+| Name | Contributions in this phase | Approx. Number of hours | Remarks |
+|------|-----------------------------|-------------------------|---------|
+| Syed Haider Ali Naqvi     |      Section 2                       |        4                 |         |
+| Umer Naeem     |          Section 3                   |            4             |         |
+| Maham Ali     |           Section 4                  |              4           |         |
+| Abdullah Hashmat     |         Section 5                    |            4             |         |
+| Wajih Sami Siddiqui     |        Section 1                     |          4               |         |
+
