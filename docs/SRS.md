@@ -49,9 +49,9 @@ Prepared by Group 6
 [x] Instructor and Assigned TA are added as collaborator.
 [x] Github Boards are setup.
 
-Github Board: https://github.com/users/BlockchainFreak/projects/2/views/1
+GitHub Board: https://github.com/users/BlockchainFreak/projects/2/views/1
 
-Github Repo: https://github.com/BlockchainFreak/gen-videa
+GitHub Repo: https://github.com/BlockchainFreak/gen-videa
 
 ## 2 Overall Description
 
