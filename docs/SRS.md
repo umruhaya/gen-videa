@@ -267,9 +267,9 @@ User Content Privacy | As a user, I want the option to be able to view the publi
 
 | Name | Contributions in this phase | Approx. Number of hours | Remarks |
 |------|-----------------------------|-------------------------|---------|
-| Syed Haider Ali Naqvi     |      Section 2                       |        4                 |         |
-| Umer Naeem     |          Section 3                   |            4             |         |
+| Syed Haider Ali Naqvi     |      Section 2 and 3                       |        4                 |         |
+| Umer Naeem     |          Section 2.1 diagram                   |            4             |    Handled non-documenting work like creating Repo, board etc      |
 | Maham Ali     |           Section 4                  |              4           |         |
 | Abdullah Hashmat     |         Section 5                    |            4             |         |
-| Wajih Sami Siddiqui     |        Section 1                     |          4               |         |
+| Wajih Sami Siddiqui     |        Section 1 and 3                     |          4               |         |
 
