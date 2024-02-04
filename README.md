@@ -2,7 +2,15 @@
 
 ## Project Overview
 
-This monorepo contains various components of our application, including CI/CD workflows, AI notebooks, client-side web application, and server-side application. The architecture is primarily based on Google Cloud services.
+This monorepo contains various components of our application, including CI/CD workflows, AI notebooks, client-side web application, and server-side application.The architecture is primarily based on Google Cloud services.
+
+## Deployment Links
+
+- [Web App](https://web.genvidea.com)
+
+- [Server Endpoint](https://api.genvidea.com)
+
+- [API documentation](https://api.genvidea.com/docs)
 
 ## Repository Structure
 
@@ -13,6 +21,10 @@ This monorepo contains various components of our application, including CI/CD wo
 - **webclient**: A SvelteKit app for the client-side web application. [Learn Svelte](https://learn.svelte.dev/)
 
 - **webserver**: Houses the FastAPI-based webserver, an integral part of the backend but not its entirety. This directory focuses on clean, minimal logic on the client-side, with most business logic on the server. [FastAPI Documentation](https://fastapi.tiangolo.com/)
+
+- **Cloud Infrastructure:** Contains IaaC modules using terraform for gcp.
+
+- **k8 components:** Kubernetes Manifests for creating deployments, services, configs and ingress etc.
 
 - **business modules**: Contains various business logic modules. Integration is achieved using PubSub.
 
