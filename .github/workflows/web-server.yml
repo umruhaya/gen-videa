@@ -58,6 +58,10 @@ jobs:
           cluster_name: ${{ env.CLUSTER_NAME }}
           location: ${{ env.CLUSTER_LOCATION }}
 
+      - name: Retrieve env file from Secret Manager
+        run: gcloud secrets versions access latest --secret="web-server-env-development" > .env
+        working-directory: ./web-server
+
       - name: Build and tag Docker image
         run: |
           SHORT_SHA=$(echo $IMAGE_TAG | cut -c1-7)
