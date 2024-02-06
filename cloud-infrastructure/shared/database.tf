@@ -17,17 +17,17 @@ resource "google_sql_database_instance" "postgres_instance" {
 }
 
 resource "google_sql_database" "development" {
-  name     = "development-database"
+  name     = "development"
   instance = google_sql_database_instance.postgres_instance.name
 }
 
 resource "google_sql_database" "staging" {
-  name     = "staging-database"
+  name     = "staging"
   instance = google_sql_database_instance.postgres_instance.name
 }
 
 resource "google_sql_database" "production" {
-  name     = "production-database"
+  name     = "production"
   instance = google_sql_database_instance.postgres_instance.name
 }
 
