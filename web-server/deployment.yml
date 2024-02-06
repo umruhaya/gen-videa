@@ -18,20 +18,36 @@ spec:
         # can only be scheduled on a node that belongs to a `general-node-pool` node pool 
         cloud.google.com/gke-nodepool: general-node-pool
       containers:
+      # Main Container for serving the requests
       - name: web-server
         image: to-be-templated-by-yq-in-workflow
         env:
         - name: ENV
           value: evironment
         - name: GOOGLE_APPLICATION_CREDENTIALS
-          value: /etc/secret/sa-keyfile
+          value: /etc/secret/keyfile.json
         - name: PORT
           value: "8080"
-      #   volumeMounts:
-      #   - name: secret-volume
-      #     mountPath: "/etc/secret"
-      #     readOnly: true
-      # volumes:
-      # - name: secret-volume
-      #   secret:
-      #     secretName: sa-keyfile
+        volumeMounts:
+        - name: secret-volume
+          mountPath: "/etc/secret"
+          readOnly: true
+        
+        # Sidecar Container for Cloud SQL Proxy
+        - name: cloud-sql-proxy
+          image: gcr.io/cloudsql-docker/gce-proxy:1.33.16-alpine
+          command:
+            - "/cloud_sql_proxy"
+            # redirect erros from stderr to stdout
+            - "-log_debug_stdout"
+            - "-instances=jetrr-vision:us-central1:postgres-instance-genvidea-default=tcp:5432"
+            - "-credential_file=/etc/secret/keyfile.json"
+          volumeMounts:
+          - name: secret-volume
+            mountPath: "/etc/secret"
+            readOnly: true
+
+      volumes:
+      - name: secret-volume
+        secret:
+          secretName: sa-keyfile
