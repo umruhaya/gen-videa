@@ -33,19 +33,26 @@ spec:
           mountPath: "/etc/secret"
           readOnly: true
         
-        # Sidecar Container for Cloud SQL Proxy
-        - name: cloud-sql-proxy
-          image: gcr.io/cloudsql-docker/gce-proxy:1.33.16-alpine
-          command:
-            - "/cloud_sql_proxy"
-            # redirect erros from stderr to stdout
-            - "-log_debug_stdout"
-            - "-instances=jetrr-vision:us-central1:postgres-instance-genvidea-default=tcp:5432"
-            - "-credential_file=/etc/secret/keyfile.json"
-          volumeMounts:
-          - name: secret-volume
-            mountPath: "/etc/secret"
-            readOnly: true
+      # Sidecar Container for Cloud SQL Proxy
+      - name: cloud-sql-proxy
+        image: gcr.io/cloudsql-docker/gce-proxy:1.33.16-alpine
+        env:
+        - name: PGPASSWORD
+          valueFrom:
+            # Create this secret `kubectl create secret generic cloudsql-db-credentials --from-literal=password='pw-here' -n <namespace>`
+            secretKeyRef:
+              name: cloudsql-db-credentials
+              key: password
+        command:
+          - "/cloud_sql_proxy"
+          # redirect erros from stderr to stdout
+          - "-log_debug_stdout"
+          - "-instances=jetrr-vision:us-central1:postgres-instance-genvidea-default=tcp:5432"
+          - "-credential_file=/etc/secret/keyfile.json"
+        volumeMounts:
+        - name: secret-volume
+          mountPath: "/etc/secret"
+          readOnly: true
 
       volumes:
       - name: secret-volume
