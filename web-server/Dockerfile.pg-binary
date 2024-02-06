@@ -1,0 +1,11 @@
+# Use this to build the base image with pre compiled binaries for faster build times
+# `docker build -t us-central1-docker.pkg.dev/jetrr-vision/genvidea-main/python-psycopg2:3.10-alpine . --file=Dockerfile.pg-binary`
+
+# Use a lightweight base image
+FROM python:3.10-alpine
+
+# Install psycopg2 dependencies, psycopg2, then clean up in one RUN to keep the image slim
+RUN apk add --no-cache --virtual .build-deps gcc postgresql-dev python3-dev musl-dev \
+    && apk add --no-cache libpq \
+    && pip install --no-cache-dir psycopg2 \
+    && apk --purge del .build-deps
