@@ -1,1 +1,2 @@
-# import all the models here
+from app.database import Base
+from .user import User

@@ -1,2 +1,10 @@
+python-dotenv
 fastapi
 uvicorn[standard]
+pydantic-settings
+pydantic[email]
+alembic
+SQLAlchemy
+python-multipart
+python-jose
+passlib

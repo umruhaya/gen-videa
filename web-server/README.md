@@ -22,6 +22,18 @@ requirements.txt        # Project dependencies
 Dockerfile              # Docker configuration for containerization
 ```
 
+## Database Proxy
+
+We need to run a Cloud SQL Proxy. Download Cloud Proxy From [Here](https://cloud.google.com/sql/docs/mysql/connect-auth-proxy#install).
+
+Run this command:
+
+```bash
+cloud-sql-proxy instance-connection-string -c /path/to/keyfile.json
+```
+
+instance-connection-string could be of the format: `jetrr-vision:us-central1:postgres-instance-genvidea-default`
+
 ## Local Development
 Developers can run the application locally using the following command:
 ```
@@ -35,6 +47,22 @@ To test changes within a Docker container, use:
 docker compose up -d
 ```
 This command starts a development environment in Docker. File changes are synchronized in watch mode. Note that modifications to `requirements.txt` will require the Docker image to be rebuilt. Docker Compose version 2.22 or later is required to use the Compose Watch feature, as detailed in the [Docker documentation](https://docs.docker.com/compose/file-watch/).
+
+## Database Migration
+
+We are using a lightweight tool `alembic` for managing database migrations.
+
+To create a revison:
+
+```bash
+alembic revision --autogenerate -m "revison title" 
+```
+
+To upgrade to the latest revision:
+
+```bash
+alembic upgrade head
+```
 
 ## Contributing
 Please adhere to the following guidelines when contributing to the project:
