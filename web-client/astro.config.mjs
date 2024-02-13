@@ -2,9 +2,20 @@ import { defineConfig } from 'astro/config';
 import tailwind from "@astrojs/tailwind";
 
 import react from "@astrojs/react";
-import svelte from "@astrojs/svelte";
 
 // https://astro.build/config
 export default defineConfig({
-  integrations: [tailwind(), react(), svelte()]
+  integrations: [
+    tailwind({
+      applyBaseStyles: false,
+    }),
+    react()
+  ],
+  vite: {
+    server: {
+      proxy: {
+        "/api": import.meta.env.MODE === "development" ? "http://127.0.0.1:8080/proxy" :"https://web.genvidea.com",
+      }
+    }
+  }
 });

@@ -1,9 +1,24 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import Layout from "@/layouts/Layout.astro";
+import HeroParallax from "@/components/ui/hero-parallax.tsx";
+import ModeToggle from "@/components/ModeToggle";
+import { Button } from "@/components/ui/moving-border.tsx";
+
+var i = 0;
+const products = Array.from({ length: 10 } ,(_, i) => ({
+    title: `Title ${i}`,
+    link: "#",
+    thumbnail:
+        "https://aceternity.com/images/products/thumbnails/new/moonbeam.png",
+}));
 ---
 
 <Layout title="Genvidea">
-	<main class="bg-slate-700 p-4">
-		Hello
-	</main>
+    <header class="p-4 flex bg-secondary">
+        <ModeToggle client:load />
+    </header>
+
+    <main class="flex flex-col gap-8">
+        <HeroParallax client:load products={products} />
+    </main>
 </Layout>

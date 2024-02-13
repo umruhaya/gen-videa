@@ -1,0 +1,25 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Genvidea">
+	<main class="bg-slate-700 p-4">
+		<button id="fetchDataBtn">Fetch Data</button>
+		<div id="dataContainer"></div>
+	</main>
+	<script>
+		// This script will run in the browser
+		document.addEventListener('DOMContentLoaded', (event) => {
+			const fetchDataBtn = document.getElementById('fetchDataBtn');
+			const dataContainer = document.getElementById('dataContainer');
+			
+			if (fetchDataBtn && dataContainer) {
+				fetchDataBtn.addEventListener('click', async () => {
+					const response = await fetch('/api');
+					const data = await response.text();
+					dataContainer.innerText = data;
+				});
+			}
+		});
+	</script>
+</Layout>
