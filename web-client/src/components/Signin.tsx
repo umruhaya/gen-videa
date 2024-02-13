@@ -47,7 +47,6 @@ export default function SignInComponent({ signupSuccess }: { signupSuccess: bool
         const formData = new FormData()
         formData.append("email", values.email)
         formData.append("password", values.password)
-        console.log("fetching")
         const response = await fetch("/api/auth/token", {
             method: "POST",
             body: formData,
@@ -55,7 +54,6 @@ export default function SignInComponent({ signupSuccess }: { signupSuccess: bool
 
         const data = await response.json()
 
-        console.debug(data.detail)
         switch (response.status) {
             case 200:
                 window.location.reload()
@@ -73,7 +71,6 @@ export default function SignInComponent({ signupSuccess }: { signupSuccess: bool
     }
 
     function onInvalidSubmit(errors: FieldErrors<z.infer<typeof formSchema>>) {
-        console.error(errors)
         form.setError("root", {
             type: "manual",
             message: "Invalid email or password.",

@@ -49,7 +49,6 @@ export default function SignUpComponent() {
 
         const data = await response.json()
 
-        console.debug(data.detail[0].msg)
         switch (response.status) {
             case 201:
                     window.location.href = "/signin?signup=success"
@@ -70,7 +69,6 @@ export default function SignUpComponent() {
     }
 
     function onInvalidSubmit(errors: FieldErrors<z.infer<typeof formSchema>>) {
-        console.error(errors)
         form.setError("root", {
             type: "manual",
             message: "Invalid email or password.",
