@@ -13,12 +13,14 @@ export default function HeroHeader() {
                 vision to life without the need for advanced editing skills.
             </p>
             <div className="flex justify-center">
-                <Button
-                    borderRadius="1.75rem"
-                    className="bg-white dark:bg-slate-900 text-black dark:text-white border-neutral-200 dark:border-slate-800"
-                >
-                    Get Started
-                </Button>
+                <a href="/signin">
+                    <Button
+                        borderRadius="1.75rem"
+                        className="bg-white dark:bg-slate-900 text-black dark:text-white border-neutral-200 dark:border-slate-800"
+                    >
+                        Get Started
+                    </Button>
+                </a>
             </div>
         </div>
     );

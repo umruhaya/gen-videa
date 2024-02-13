@@ -1,0 +1,19 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import SigninSection from "@/components/Signin.tsx";
+
+if (Astro.cookies.has("access_token")) {
+    return Astro.redirect("/dashboard");
+}
+
+const signupSuccess = Astro.url.searchParams.get("signup") === "success"
+
+console.log(signupSuccess)
+---
+
+
+<Layout title="Genvidea">
+    <main class="w-screen h-screen grid place-items-center">
+        <SigninSection signupSuccess={signupSuccess} client:load />
+    </main>
+</Layout>

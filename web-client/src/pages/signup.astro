@@ -1,0 +1,16 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import SignupSection from "@/components/Signup.tsx";
+import { Toaster } from "@/components/ui/toaster";
+
+if (Astro.cookies.has("access_token")) {
+    return Astro.redirect("/dashboard");
+}
+---
+
+
+<Layout title="Genvidea">
+    <main>
+        <SignupSection client:load />
+    </main>
+</Layout>
