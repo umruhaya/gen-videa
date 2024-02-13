@@ -9,11 +9,11 @@ from app.core.security import bcrypt_context
 from app.dependencies import db_dependency
 from app.models import User
 from app.settings import settings as env
-from app.responses import unauthorized_response
+from app.responses import unauthorized_response, conflict_response
 
 router = APIRouter(prefix='/auth', tags=['auth'])
 
-@router.post("/signup", status_code=status.HTTP_201_CREATED, responses={409: unauthorized_response})
+@router.post("/signup", status_code=status.HTTP_201_CREATED, responses={409: conflict_response})
 async def create_user(db: db_dependency, create_user_request: CreateUserRequest):
     create_user_model = User(
         email=create_user_request.email,  # email should be unique
