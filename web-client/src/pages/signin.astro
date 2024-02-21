@@ -1,0 +1,11 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import SigninSection from "@/components/Signin.tsx";
+---
+
+
+<Layout title="Genvidea">
+    <main class="w-screen h-screen grid place-items-center">
+        <SigninSection client:load />
+    </main>
+</Layout>

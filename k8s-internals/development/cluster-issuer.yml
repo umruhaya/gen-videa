@@ -5,5 +5,4 @@ metadata:
   namespace: development
 spec:
   domains:
-    - api.genvidea.com
     - web.genvidea.com

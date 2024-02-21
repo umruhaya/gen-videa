@@ -7,26 +7,9 @@ metadata:
     networking.gke.io/managed-certificates: api-genvidea-com-cert
 spec:
   rules:
-    - host: api.genvidea.com
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: web-server-service
-                port:
-                  number: 80
     - host: web.genvidea.com
       http:
         paths:
-          - path: /api
-            pathType: Prefix
-            backend:
-              service:
-                name: web-server-service
-                port:
-                  number: 80
           - path: /
             pathType: Prefix
             backend:
