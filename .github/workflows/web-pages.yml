@@ -72,9 +72,7 @@ jobs:
       - name: Update deployment file with the new image tag
         run: |
           SHORT_SHA=$(echo $IMAGE_TAG | cut -c1-7)
-          yq eval ".spec.template.spec.containers[0].image = \"${GCR_HOSTNAME}/${GCP_PROJECT_ID}/${GCR_REPOSITORY}/${IMAGE_NAME}:${BRANCH_NAME}-${SHORT_SHA}\" | \
-            .spec.template.spec.containers[0].env[0].value = \"${BRANCH_NAME}\" | \
-            .metadata.namespace = \"${BRANCH_NAME}\"" deployment.yml > deployment-new.yml
+          yq eval ".spec.template.spec.containers[0].image = \"${GCR_HOSTNAME}/${GCP_PROJECT_ID}/${GCR_REPOSITORY}/${IMAGE_NAME}:${BRANCH_NAME}-${SHORT_SHA}\"" deployment.yml > deployment-new.yml
         working-directory: ./web-client
 
       - name: Deploy to GKE
