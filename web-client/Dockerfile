@@ -1,20 +1,9 @@
-# Use the official Nginx image as the base
-FROM nginx:alpine
+FROM node:20-alpine AS build
+WORKDIR /app
+COPY . .
+RUN npm i -g pnpm
+RUN pnpm i
+RUN pnpm astro build
 
-# Remove the default Nginx configuration file
-RUN rm /etc/nginx/conf.d/default.conf
-
-# Copy the configuration file from your local to the container
-COPY ./config/default.conf /etc/nginx/conf.d/
-
-# Remove the default nginx.html file
-RUN rm /usr/share/nginx/html/index.html
-
-# Copy the content of the 'website' directory to /usr/share/nginx/html
-COPY ./dist /usr/share/nginx/html
-
-# Expose port 80
-EXPOSE 80
-
-# Start Nginx when the container has provisioned.
-CMD ["nginx", "-g", "daemon off;"]
+FROM httpd:2.4-alpine AS runtime
+COPY --from=build /app/dist /usr/local/apache2/htdocs/

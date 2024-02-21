@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-client
+  labels:
+    app: web-client
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web-client
+  template:
+    metadata:
+      labels:
+        app: web-client
+    spec:
+      nodeSelector:
+        # can only be scheduled on a node that belongs to a `general-node-pool` node pool 
+        cloud.google.com/gke-nodepool: general-node-pool
+      containers:
+      # Main Container for serving the requests
+      - name: web-client
+        image: to-be-templated-by-yq-in-workflow
