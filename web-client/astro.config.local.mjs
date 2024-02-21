@@ -2,6 +2,14 @@ import { defineConfig } from 'astro/config';
 import tailwind from "@astrojs/tailwind";
 import react from "@astrojs/react";
 
+const localProxy = "http://127.0.0.1:8080"
+
+console.log(import.meta.env.PRODUCTION)
+
+const proxy = import.meta.env.PRODUCTION ? ({}) : ({
+  "/api": localProxy
+});
+
 // https://astro.build/config
 export default defineConfig({
   integrations: [
@@ -10,4 +18,9 @@ export default defineConfig({
     }),
     react(),
   ],
+  vite: {
+    server: {
+      proxy
+    }
+  }
 });

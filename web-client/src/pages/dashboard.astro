@@ -1,13 +1,5 @@
 ---
 import Layout from "@/layouts/Layout.astro";
-
-export const prerender = false
-
-
-if (Astro.cookies.has("access_token") === false) {
-    console.log("redirecting");
-    return Astro.redirect("/");
-}
 ---
 
 <Layout title="Genvidea">

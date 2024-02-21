@@ -26,9 +26,10 @@ const formSchema = z.object({
 })
 
 
-export default function SignInComponent({ signupSuccess }: { signupSuccess: boolean }) {
+export default function SignInComponent() {
 
     const { toast } = useToast()
+
 
     // 1. Define your form.
     const form = useForm<z.infer<typeof formSchema>>({
@@ -38,6 +39,20 @@ export default function SignInComponent({ signupSuccess }: { signupSuccess: bool
             password: "",
         },
     })
+
+    useEffect(() => {
+        const searchParams = new URLSearchParams(window.location.search)
+        const signupSuccess = searchParams.get("signup") === "success"
+        if (signupSuccess) {
+            toast({
+                title: "Signed up successfully.",
+                description: "You can now sign in with your new account.",
+                action: (
+                    <ToastAction altText="Ack">Lezgo</ToastAction>
+                ),
+            })
+        }
+    }, [])
 
     // 2. Define a submit handler.
     async function onValidSubmit(values: z.infer<typeof formSchema>, e?: BaseSyntheticEvent<object, any, any>) {
@@ -76,18 +91,6 @@ export default function SignInComponent({ signupSuccess }: { signupSuccess: bool
             message: "Invalid email or password.",
         })
     }
-
-    useEffect(() => {
-        if (signupSuccess) {
-            toast({
-                title: "Signed up successfully.",
-                description: "You can now sign in with your new account.",
-                action: (
-                    <ToastAction altText="Ack">Lezgo</ToastAction>
-                ),
-            })
-        }
-    }, [])
 
     return (
         <>

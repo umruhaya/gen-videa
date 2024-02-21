@@ -2,16 +2,26 @@
 import Layout from "@/layouts/Layout.astro";
 import HeroParallax from "@/components/ui/hero-parallax.tsx";
 import ModeToggle from "@/components/ModeToggle";
-import { Button } from "@/components/ui/moving-border.tsx";
 
-export const prerender = false;
+const names = [
+    "aladdin.png",
+    "beech-dancer.png",
+    "elven-queen.png",
+    "golden-oasis.png",
+    "icy-blue.png",
+    "star-wars.png",
+    "astronaut.png",
+    "futuristic-lab.png",
+    "handsome-musketeer.png",
+    "moana-disney.png",
+    "techno-fantasy.png",
+];
 
-const products = Array.from({ length: 10 } ,(_, i) => ({
-    title: `Title ${i}`,
+const prods = names.map(name => ({
+    title: name,
     link: "#",
-    thumbnail:
-        "https://aceternity.com/images/products/thumbnails/new/moonbeam.png",
-}));
+    thumbnail: `https://storage.googleapis.com/static-web-pages/library/${name}`
+}))
 ---
 
 <Layout title="Genvidea">
@@ -20,6 +30,6 @@ const products = Array.from({ length: 10 } ,(_, i) => ({
     </header>
 
     <main class="flex flex-col gap-8">
-        <HeroParallax client:load products={products} />
+        <HeroParallax client:load products={prods} />
     </main>
 </Layout>

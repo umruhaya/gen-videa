@@ -1,3 +1,7 @@
+# vscode
+.vscode
+.vite
+
 # build output
 dist/
 
