@@ -1,16 +1,33 @@
-# Astro Starter Kit: Basics
+# Astro Frontend
 
-```sh
-npm create astro@latest -- --template basics
+## Getting Started
+
+1. Installing package manager for node
+
+On Windows:
+
+```bash
+npm i -g pnpm
 ```
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/basics)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/basics)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/basics/devcontainer.json)
+or on MaCOS or Linux
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+```bash
+sudo npm i -g pnpm
+```
 
-![just-the-basics](https://github.com/withastro/astro/assets/2244813/a0a5533c-a856-4198-8470-2d67b1d7c554)
+2. Install node modules by running `pnpm i` when you are getting started or whenever you pull changes using `git pull`
+
+3. Start the development server using `pnpm run dev`
+
+4. In another teminal, run the CORS proxy to avoid getting errors with api calls
+
+```bash
+cd web-client
+pnpm proxy
+```
+
+5. Use git lens vscode extension to add and commit files or you can also do it manually using git in yoru terminal
 
 ## 🚀 Project Structure
 
@@ -22,11 +39,16 @@ Inside of your Astro project, you'll see the following folders and files:
 │   └── favicon.svg
 ├── src/
 │   ├── components/
-│   │   └── Card.astro
+│   │   └── HeroHeader.tsx
+│   │   └── Signin.tsx
+│   │   └── Signup.tsx
 │   ├── layouts/
 │   │   └── Layout.astro
 │   └── pages/
 │       └── index.astro
+│       └── signin.astro
+│       └── signup.astro
+│       └── dashboard.astro
 └── package.json
 ```
 
@@ -51,4 +73,4 @@ All commands are run from the root of the project, from a terminal:
 
 ## 👀 Want to learn more?
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+Feel free to check [Astro documentation](https://docs.astro.build).
