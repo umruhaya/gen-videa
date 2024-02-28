@@ -5,7 +5,8 @@ export default function DashboardComponent() {
     const handleLogout = async () => {
         const response = await fetch("/api/auth/logout", {
             method: "POST",
-        }).catch(() => {})
+        })
+        .catch(() => {})
         window.location.href = "/signin"
     }
 
