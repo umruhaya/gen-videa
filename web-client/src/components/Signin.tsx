@@ -95,6 +95,25 @@ export default function SignInComponent() {
     return (
         <>
             <section className="w-screen h-screen grid place-items-center">
+                <nav className="Nav px-4 py-2 flex justify-between items-center w-full">
+                    <div className="Nav-brand">
+                        <h4 className="text-2xl md:text-5xl font-bold dark:text-white">
+                            GenVidea
+                        </h4>
+                    </div>
+
+                    <div className="flex items-center">
+                        <a href="/">
+                            <button className="bg-white dark:bg-slate-900 text-black dark:text-white border-neutral-200 dark:border-slate-800">
+                                Home
+                            </button>
+                            <button className="text-white ml-4 px-3 py-1 rounded-md hover:bg-gray-700 transition-colors">
+                                <i className="fas fa-cog"></i>
+                            </button>
+                        </a>
+                    </div>
+                </nav>
+                
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onValidSubmit, onInvalidSubmit)} className="md:w-96 p-8 bg-secondary">
                         <FormField
@@ -127,7 +146,13 @@ export default function SignInComponent() {
 
                         <Button className="mt-4" type="submit">Submit</Button>
                     </form>
+                    <div>
+                        <a href="/signup">
+                            Don't Have An Account? <Button className="mt-2">Sign up</Button>
+                        </a>
+                    </div>
                 </Form>
+
             </section>
             <Toaster />
         </>
