@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/moving-border.tsx";
 
+
 export default function HeroHeader() {
     return (
         <div className="max-w-7xl relative mx-auto py-20 md:py-40 px-4 w-full  left-0 top-0">
@@ -13,12 +14,22 @@ export default function HeroHeader() {
                 vision to life without the need for advanced editing skills.
             </p>
             <div className="flex justify-center">
-                <a href="/signin">
+                <a href="/signup">
                     <Button
                         borderRadius="1.75rem"
                         className="bg-white dark:bg-slate-900 text-black dark:text-white border-neutral-200 dark:border-slate-800"
                     >
                         Get Started
+                    </Button>
+                </a>
+            </div>
+            <div className="flex justify-center">
+                <a href="/profile">
+                    <Button
+                        borderRadius="1.75rem"
+                        className="bg-white dark:bg-slate-900 text-black dark:text-white border-neutral-200 dark:border-slate-800"
+                    >
+                        Profile
                     </Button>
                 </a>
             </div>
