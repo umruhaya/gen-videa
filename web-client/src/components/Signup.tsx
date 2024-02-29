@@ -76,52 +76,67 @@ export default function SignUpComponent() {
     }
 
     return (
-        <Form {...form}>
-            <form onSubmit={form.handleSubmit(onValidSubmit, onInvalidSubmit)} className="md:w-96 p-8 bg-secondary">
-                <FormField
-                    control={form.control}
-                    name="username"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Username</FormLabel>
-                            <FormControl>
-                                <Input placeholder="Umer Naeem" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
+        <>
+        <nav className="Nav px-1 py-0 flex justify-between items-center w-full">
+            <div>
+                <h4 className="text-2xl md:text-5xl font-bold dark:text-white">
+                    GenVidea
+                </h4>
+            </div>
 
-                <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Email</FormLabel>
-                            <FormControl>
-                                <Input placeholder="user@example.com" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
+            <div className="flex items-center">
+                <a href="/">
+                    <button className="bg-white dark:bg-slate-900 text-black dark:text-white border-neutral-200 dark:border-slate-800">
+                        Home
+                    </button>
+                    <button className="text-white ml-4 px-3 py-1 rounded-md hover:bg-gray-700 transition-colors">
+                        <i className="fas fa-cog"></i>
+                    </button>
+                </a>
+            </div>
+        </nav><Form {...form}>
+                <form onSubmit={form.handleSubmit(onValidSubmit, onInvalidSubmit)} className="md:w-96 p-8 bg-secondary">
+                    <FormField
+                        control={form.control}
+                        name="username"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Username</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="Umer Naeem" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
 
-                <FormField
-                    control={form.control}
-                    name="password"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Password</FormLabel>
-                            <FormControl>
-                                <Input type="password" placeholder="*********" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
+                    <FormField
+                        control={form.control}
+                        name="email"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Email</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="user@example.com" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
 
-                <Button className="mt-4" type="submit">Submit</Button>
-            </form>
-        </Form>
+                    <FormField
+                        control={form.control}
+                        name="password"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Password</FormLabel>
+                                <FormControl>
+                                    <Input type="password" placeholder="*********" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
+
+                    <Button className="mt-4" type="submit">Submit</Button>
+                </form>
+            </Form></>
     )
 }

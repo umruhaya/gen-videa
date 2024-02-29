@@ -1,6 +1,5 @@
 import React from "react";
 import styles from '../styles/UserProfileHeader.css';
-import { MoveLeft } from "lucide-react";
 import { Button } from "./ui/moving-border";
 
 class Header extends React.Component {

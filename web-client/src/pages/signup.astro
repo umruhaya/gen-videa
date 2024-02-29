@@ -1,11 +1,17 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import SignupSection from "@/components/Signup.tsx";
+import { Button } from "@/components/ui/button";
 ---
 
 
 <Layout title="Genvidea">
     <main class="w-screen h-screen grid place-items-center">
         <SignupSection client:load />
+        <div>
+            <a href="/signin">
+                Already Have an Account? <Button className="mt-4">Sign in</Button>
+            </a>
+        </div>
     </main>
 </Layout>
