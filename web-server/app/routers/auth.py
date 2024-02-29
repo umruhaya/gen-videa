@@ -57,7 +57,7 @@ async def login_for_access_token(form_data: Annotated[OAuth2EmailPasswordRequest
         expires_delta=timedelta(hours=env.ACCESS_TOKEN_EXPIRE_HOURS)
     )
 
-    response.set_cookie(key="access_token", value=token, httponly=True, secure=True, samesite="Lax")
+    response.set_cookie(key="access_token", value=token, samesite="Lax")
     # return {"message": "Login successful"}
 
     return {"access_token": token, 'token_type':'bearer'}
@@ -66,7 +66,7 @@ async def login_for_access_token(form_data: Annotated[OAuth2EmailPasswordRequest
 async def logout(request: Request, response: Response):
 
     if request.cookies.get("access_token"):
-        response.delete_cookie(key="access_token", httponly=True, secure=True, samesite="Lax")
+        response.delete_cookie(key="access_token", samesite="Lax")
         return {"message": "Logout successful"}
     else:
         raise HTTPException(
