@@ -1,0 +1,37 @@
+---
+// Import React components
+import React from 'react';
+import SettingsForm from '../components/SettingsForm'; 
+---
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile Settings</title>
+    <link rel="stylesheet" href="/styles/settings.css" />
+  </head>
+  <body>
+    <div class="profile-settings">
+      <header>
+        <h1>My Profile</h1>
+        <button class="close-button">X</button>
+      </header>
+      <SettingsForm />
+    </div>
+    <script type="module">
+      import React from 'react';
+      import ReactDOM from 'react-dom';
+      import SettingsForm from '../components/SettingsForm.tsx'; 
+
+      ReactDOM.createRoot(
+        document.querySelector('.profile-settings')
+      ).render(
+        <React.StrictMode>
+          <SettingsForm />
+        </React.StrictMode>
+      );
+    </script>
+  </body>
+</html>
+
