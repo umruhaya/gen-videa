@@ -29,7 +29,7 @@
   overflow: hidden; /* Ensures the image doesn't bleed outside the border-radius */
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   height: 250px; /* Fixed height for your image */
-  background-image: url('https://via.placeholder.com/500'); /* Placeholder image */
+  /*background-image: url('https://via.placeholder.com/500'); Placeholder image */
   background-size: cover;
   background-position: center;
 }
