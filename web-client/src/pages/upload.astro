@@ -1,0 +1,26 @@
+---
+// Frontmatter script in Astro starts with three dashes
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.tsx";
+import '../styles/UploadPage.css';
+
+// Define the URL for the dummy image
+const dummyImageUrl = 'https://via.placeholder.com/400x300'; // You can replace this URL with any other placeholder or static image URL
+---
+
+<Layout title="Upload - GenVidea">
+    <Header />
+    <main class="upload-page-container">
+        <section class="upload-form-container">
+            <div class="image-preview-container">
+                <!-- Include the dummy image here -->
+                <img src={dummyImageUrl} alt="Dummy preview" class="image-preview" />
+            </div>
+            <form method="POST" action="/api/upload" enctype="multipart/form-data" class="upload-form">
+                <input type="file" name="video" accept="video/*" class="file-input" />
+                <textarea name="caption" placeholder="Add a caption..." required class="caption-input"></textarea>
+                <button type="submit" class="submit-button">Upload Image</button>
+            </form>
+        </section>
+    </main>
+</Layout>
