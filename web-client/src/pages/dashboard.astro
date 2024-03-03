@@ -1,9 +1,16 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import Dashboard from "@/components/Dashboard.tsx";
+import Header from "@/components/Header";
+
+export const prerender = false
+if (Astro.cookies.has("access_token") === false) {
+    return Astro.redirect("/");
+}
 ---
 
 <Layout title="Genvidea">
+    <Header isLoggedIn={true} client:load/>
     <main class="w-screen h-screen grid place-items-center">
         <Dashboard client:load />
     </main>

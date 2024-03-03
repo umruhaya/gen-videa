@@ -12,21 +12,13 @@ export default function HeroHeader() {
                 Dive into a world where creativity meets technology, and bring your
                 vision to life without the need for advanced editing skills.
             </p>
-            <div className="flex justify-center space-x-4"> {/* Adjusted for multiple buttons */}
+            <div className="flex justify-center space-x-4">
                 <a href="/signup">
                     <Button
                         borderRadius="1.75rem"
                         className="bg-white dark:bg-slate-900 text-black dark:text-white border-neutral-200 dark:border-slate-800"
                     >
                         Get Started
-                    </Button>
-                </a>
-                <a href="/profile">
-                    <Button
-                        borderRadius="1.75rem"
-                        className="bg-white dark:bg-slate-900 text-black dark:text-white border-neutral-200 dark:border-slate-800"
-                    >
-                        Profile
                     </Button>
                 </a>
             </div>

@@ -4,32 +4,36 @@ import VideoGallery from "@/components/VideoGallery.tsx";
 import UserProfileHeader from "@/components/UserProfileHeader.tsx";
 import Header from "../components/Header.tsx";
 
-interface User {
-    name: string;
-    username: string;
-    profilePicture: string;
-    email: string;
-    location: string;
-  }
-  
-  const dummyUser: User = {
-    name: "Haider",
-    username: "H4ID3R",
-    profilePicture: "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
-    email: "haider@hotmail.com",
-    location: "Lahore, Pakistan"
-  };
+export const prerender = false;
+if (Astro.cookies.has("access_token") === false) {
+  return Astro.redirect("/");
+}
 
-  interface Video 
-{
+interface User {
+  name: string;
+  username: string;
+  profilePicture: string;
+  email: string;
+  location: string;
+}
+
+const dummyUser: User = {
+  name: "Haider",
+  username: "H4ID3R",
+  profilePicture:
+    "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
+  email: "haider@hotmail.com",
+  location: "Lahore, Pakistan",
+};
+
+interface Video {
   id: string;
   title: string;
   thumbnailUrl: string;
   // ... add other video properties here as needed
 }
 
-interface VideoGalleryProps 
-{
+interface VideoGalleryProps {
   videos: Video[];
 }
 
@@ -37,26 +41,28 @@ interface VideoGalleryProps
 const videos: Video[] = [
   // Dummy video data
   {
-    id: 'video-1',
-    title: 'First Video',
-    thumbnailUrl: 'https://youtu.be/FOMGYHD1kY0?si=9_m2U0rKzfjph9Sl',
+    id: "video-1",
+    title: "First Video",
+    thumbnailUrl: "https://youtu.be/FOMGYHD1kY0?si=9_m2U0rKzfjph9Sl",
     // ... other properties
   },
   // ... more videos
 ];
 ---
 
-
 <Layout title="Genvidea">
-    <main class="w-screen h-screen grid">
-        <Header />
-        <UserProfileHeader client:load name="Haider Ali"
-        username="H4ID3R"
-        profilePicture="https://media.licdn.com/dms/image/D5603AQFbfsRQ25_flw/profile-displayphoto-shrink_800_800/0/1692892240863?e=1714608000&v=beta&t=gDVtsd8zm56BN8ZV_lqzY6vXWl9R1EYPHVeygiOL3FY"
-        postCount={164}
-        followerCount={188}
-        followingCount={206}
-        bio="Hey there! Im using GenVidea"/>
-        <VideoGallery client:load />
-    </main>
+  <Header isLoggedIn={true} client:load />
+  <main class="w-screen h-screen grid">
+    <UserProfileHeader
+      client:load
+      name="Haider Ali"
+      username="H4ID3R"
+      profilePicture="https://media.licdn.com/dms/image/D5603AQFbfsRQ25_flw/profile-displayphoto-shrink_800_800/0/1692892240863?e=1714608000&v=beta&t=gDVtsd8zm56BN8ZV_lqzY6vXWl9R1EYPHVeygiOL3FY"
+      postCount={164}
+      followerCount={188}
+      followingCount={206}
+      bio="Hey there! Im using GenVidea"
+    />
+    <VideoGallery client:load />
+  </main>
 </Layout>

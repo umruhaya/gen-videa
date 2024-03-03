@@ -1,7 +1,7 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import HeroParallax from "@/components/ui/hero-parallax.tsx";
-import ModeToggle from "@/components/ModeToggle";
+import Header from "@/components/Header";
 
 const names = [
     "aladdin.png",
@@ -25,9 +25,7 @@ const prods = names.map(name => ({
 ---
 
 <Layout title="Genvidea">
-    <header class="p-4 flex bg-secondary">
-        <ModeToggle client:load />
-    </header>
+    <Header isLoggedIn={false} client:load />
 
     <main class="flex flex-col gap-8">
         <HeroParallax client:load products={prods} />

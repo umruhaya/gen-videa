@@ -53,7 +53,7 @@ const UserProfileHeader: React.FC<UserProps> = ({
           <div className="profile-user-settings">
             <h2 className="profile-user-name">{username}</h2>
 
-            <a href="/UserSettings">
+            <a href="/settings">
             <button className="btn profile-edit-btn">Edit Profile</button>
             </a>
 
