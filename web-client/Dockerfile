@@ -3,6 +3,6 @@ WORKDIR /app
 COPY . .
 RUN npm i -g pnpm
 RUN pnpm i
-RUN pnpm astro build
+RUN pnpm astro build --host 127.0.0.1
 
 CMD node ./dist/server/entry.mjs
