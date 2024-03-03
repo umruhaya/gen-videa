@@ -16,8 +16,8 @@ async def root():
 
 @app.get("/user-details", responses={409: unauthorized_response})
 async def user_details(user: user_dependency, db: db_dependency):
-    return get_db_user_from_token(user["email"], db)
-    
+    user_details = get_db_user_from_token(user["email"], db)
+    return user_details
 
 @app.api_route("/{full_path:path}", methods=["GET"])
 async def catch_all(request: Request, full_path: str):
