@@ -2,6 +2,7 @@ import styles from '../styles/UserProfileHeader.css';
 import { Button } from "@/components/ui/moving-border.tsx";
 
 
+
 interface User {
   name: string;
   username: string;
@@ -52,9 +53,9 @@ const UserProfileHeader: React.FC<UserProps> = ({
           <div className="profile-user-settings">
             <h2 className="profile-user-name">{username}</h2>
 
+            <a href="/UserSettings">
             <button className="btn profile-edit-btn">Edit Profile</button>
-
-            <a href="/upload"><button className="btn upload-content-btn">Create</button></a>
+            </a>
 
             <button
               className="btn profile-settings-btn"
@@ -69,6 +70,9 @@ const UserProfileHeader: React.FC<UserProps> = ({
               <span className="profile-real-name">{name}</span> <br /> <br />
               {bio}
             </p>
+          </div>
+          <div>
+          <a href="/upload"><Button>Create</Button></a>
           </div>
         </div>
       </div>
