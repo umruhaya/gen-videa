@@ -1,5 +1,5 @@
-# variable "credentials_file" {
-#   description = "Path of the credential file for GCP service account"
-#   type        = string
-# }
-
+variable "gcp_project_id" {
+    description = "The GCP project ID"
+    type        = string
+    default     = "jetrr-vision"
+}

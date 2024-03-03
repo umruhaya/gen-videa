@@ -13,7 +13,7 @@ resource "google_container_cluster" "genvidea_cluster" {
   */
   initial_node_count       = 1
   remove_default_node_pool = true
-  # deletion_protection      = true # set to false only when you want to delete the cluster
+  deletion_protection      = true # set to false only when you want to delete the cluster (gets tricky so might need some manual intervention)
 
   cluster_autoscaling {
     enabled = true
@@ -31,6 +31,11 @@ resource "google_container_cluster" "genvidea_cluster" {
       minimum       = 1024  # Specify the minimum amount of memory in MB
       maximum       = 1048576 # 1 TB
     }
+
+  }
+  
+  workload_identity_config {
+    workload_pool = "${data.google_project.project.project_id}.svc.id.goog"
   }
 
   node_config {
@@ -46,7 +51,7 @@ resource "google_container_node_pool" "general_node_pool" {
   name       = "general-node-pool"
   location   = "us-central1-f"
   cluster    = google_container_cluster.genvidea_cluster.name
-  node_count = 0
+  node_count = 1
 
   node_config {
     machine_type = "e2-standard-2"

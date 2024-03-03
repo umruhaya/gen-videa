@@ -19,6 +19,7 @@ gcloud services enable sqladmin.googleapis.com
 gcloud services enable storage.googleapis.com
 gcloud services enable cloudresourcemanager.googleapis.com
 gcloud services enable servicenetworking.googleapis.com
+gcloud services enable cloudasset.googleapis.com]
 ```
 
 ## Directory Structure
@@ -50,7 +51,7 @@ cloud-infrastructure/
 you can provide variables like this:
 
 ```bash
-terraform plan -var "credentials_file=$GOOGLE_APPLICATION_CREDENTIALS"
+GOOGLE_APPLICATION_CREDENTIALS="/path/to/keyfile.json"
 
 # if state gets locked
 terraform force-unlock -force LOCK_ID

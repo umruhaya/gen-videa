@@ -1,4 +1,5 @@
-# variable "environment" {
-#   description = "The deployment environment (e.g., dev, staging, production)"
-#   type        = string
-# }
+variable "gcp_project_id" {
+    description = "The GCP project ID"
+    type        = string
+    default     = "jetrr-vision"
+}

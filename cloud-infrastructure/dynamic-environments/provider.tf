@@ -1,4 +1,4 @@
 provider "google" {
-  project     = "jetrr-vision"
+  project     = var.gcp_project_id
   region      = "us-central1"
 }
