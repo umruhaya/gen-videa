@@ -18,7 +18,7 @@ This monorepo contains various components of our application, including CI/CD wo
 
 - **AI Notebooks**: Includes notebooks with code for the AI part of our application. These can be run on Google's free T4 GPU for tuning and sharing research results.
 
-- **webclient**: A SvelteKit app for the client-side web application. [Learn Svelte](https://learn.svelte.dev/)
+- **webclient**: An Astro framework with React components for the client-side web application.
 
 - **webserver**: Houses the FastAPI-based webserver, an integral part of the backend but not its entirety. This directory focuses on clean, minimal logic on the client-side, with most business logic on the server. [FastAPI Documentation](https://fastapi.tiangolo.com/)
 
