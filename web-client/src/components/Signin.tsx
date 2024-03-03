@@ -18,6 +18,7 @@ import { ToastAction } from "@/components/ui/toast"
 import { useToast } from "@/components/ui/use-toast"
 import { Toaster } from "./ui/toaster"
 
+
 const formSchema = z.object({
     email: z.string().email(),
     password: z.string().min(8, {
@@ -94,8 +95,7 @@ export default function SignInComponent() {
 
     return (
         <>
-            <section className="w-screen h-screen grid place-items-center">
-                <nav className="Nav px-4 py-2 flex justify-between items-center w-full">
+        <nav className="Nav px-1 py-0 flex justify-between items-center w-full">
                     <div className="Nav-brand">
                         <h4 className="text-2xl md:text-5xl font-bold dark:text-white">
                             GenVidea
@@ -113,7 +113,7 @@ export default function SignInComponent() {
                         </a>
                     </div>
                 </nav>
-                
+            <section className="w-screen h-screen grid place-items-center">
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onValidSubmit, onInvalidSubmit)} className="md:w-96 p-8 bg-secondary">
                         <FormField
@@ -146,12 +146,28 @@ export default function SignInComponent() {
 
                         <Button className="mt-4" type="submit">Submit</Button>
                     </form>
-                    <div>
-                        <a href="/signup">
-                            Don't Have An Account? <Button className="mt-2">Sign up</Button>
-                        </a>
-                    </div>
                 </Form>
+                <div>
+                    <style>{`
+                .signup-link {
+                    color: #1f9eff;
+                    text-decoration: underline;
+                }
+
+                .signup-link:hover {
+                    color: #0060a9;
+                    text-decoration: none;
+                }
+            `}</style>
+
+                    <div>
+                        <p>Don't have an account?{' '}
+                            <a href="/signup" className="signup-link">
+                                Sign up
+                            </a>
+                        </p>
+                    </div>
+                </div>
 
             </section>
             <Toaster />
