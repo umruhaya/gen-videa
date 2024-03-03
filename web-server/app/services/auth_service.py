@@ -39,3 +39,8 @@ async def get_current_user(request: Request):
     except JWTError:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail='Could not validate user.')
+    
+async def get_db_user_from_token(email: str, db: Session):
+    user = db.query(User).filter(User.email == email).first()
+    sanitized_user = { 'username': user.username, 'email': user.email }
+    return sanitized_user

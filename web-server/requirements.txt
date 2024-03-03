@@ -8,3 +8,6 @@ SQLAlchemy
 python-multipart
 python-jose
 passlib
+openai
+opencv-python-headless
+google-cloud-storage

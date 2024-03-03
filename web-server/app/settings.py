@@ -17,6 +17,12 @@ class Setting(BaseSettings):
     ALGORITHM: str
     ACCESS_TOKEN_EXPIRE_HOURS: int
 
+    # OpenAI
+    OPENAI_API_KEY: str
+
+    # Storage
+    BASE_STORAGE_URL: str
+
     class Config:
         env_file = ".env"
 

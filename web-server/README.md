@@ -15,11 +15,23 @@ app/
 ├── models/             # SQL models using SQLAlchemy
 ├── utils/              # Helper functions and utilities
 ├── routers/            # API routers
+│   │── auth/        # For handling Authentication Logic
 │   └── webhook/        # Router for PubSub webhook (HTTP push subscription)
 ├── main.py             # Entrypoint of the application
 ├── dependencies.py     # Dependency injection and related utilities
 requirements.txt        # Project dependencies
 Dockerfile              # Docker configuration for containerization
+```
+
+## Getting Started
+
+```bash
+# set path to GCP credentials
+GOOGLE_APPLICATION_CREDENTIALS="/path/to/keyfile.json"
+cloud-sql-proxy jetrr-vision:us-central1:postgres-instance-genvidea-default
+uvicorn app.main:app 
+# or (for dev)
+uvicorn app.main:app --reload
 ```
 
 ## Database Proxy
@@ -31,6 +43,8 @@ Run this command:
 ```bash
 cloud-sql-proxy instance-connection-string -c /path/to/keyfile.json
 ```
+
+If you already have set the `GOOGLE_APPLICATION_CREDENTIALS` environment variable, it will Authorize with Application Default Credentials without the need for expicit path using `-c` flag.
 
 instance-connection-string could be of the format: `jetrr-vision:us-central1:postgres-instance-genvidea-default`
 

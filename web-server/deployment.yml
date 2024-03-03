@@ -28,6 +28,8 @@ spec:
           value: /etc/secret/keyfile.json
         - name: PORT
           value: "8080"
+        - name: BASE_STORAGE_URL
+          value: genvidea-uploads-
         volumeMounts:
         - name: secret-volume
           mountPath: "/etc/secret"
