@@ -34,6 +34,19 @@ spec:
         - name: secret-volume
           mountPath: "/etc/secret"
           readOnly: true
+        readinessProbe:
+          httpGet:
+            path: /readiness
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /liveness
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        terminationGracePeriodSeconds: 300 # 5 minutes :)
         
       # Sidecar Container for Cloud SQL Proxy
       - name: cloud-sql-proxy
