@@ -49,7 +49,7 @@ def create_file_upload_url(db: db_dependency, user: user_dependency, file: FileU
         extension=file.extension,
         content_type=file_type,
         source='user_upload',
-        user_email=user.email
+        user_email=user["email"],
     )
 
     db.add(file)
