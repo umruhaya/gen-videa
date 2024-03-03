@@ -9,22 +9,20 @@ data:
       listen       80;
       server_name  localhost;
 
-      location = / {
-        proxy_pass https://storage.googleapis.com/static-web-pages/development/index.html;
-        proxy_set_header Host storage.googleapis.com;
-      }
-
       location / {
-        proxy_pass https://storage.googleapis.com/static-web-pages/development/;
-        proxy_set_header Host storage.googleapis.com;
+        proxy_pass http://web-client-service.development.svc.cluster.local;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
       }
 
       location /api/ {
         rewrite ^/api/(.*)$ /$1 break;
-          proxy_pass http://web-server-service.development.svc.cluster.local;
-          proxy_set_header Host $host;
-          proxy_set_header X-Real-IP $remote_addr;
-          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-          proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_pass http://web-server-service.development.svc.cluster.local;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
       }
     }

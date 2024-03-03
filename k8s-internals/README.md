@@ -8,6 +8,12 @@ gcloud container clusters get-credentials genvidea-cluster --zone us-central1-f
 kubectl get events --sort-by='.metadata.creationTimestamp' > events.log
 ```
 
+## BusyBox Testing
+
+```bash
+kubectl run busybox-test --image=busybox --restart=Never --rm -it -- /bin/sh
+```
+
 
 ## YAML Validation
 
