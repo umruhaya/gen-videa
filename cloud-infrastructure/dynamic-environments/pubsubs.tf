@@ -8,6 +8,10 @@ resource "google_pubsub_topic" "file_upload" {
   name = "genvidea-file-uploaded-to-storage-${terraform.workspace}"
 }
 
+resource "google_pubsub_topic" "file_upload_dead_letter" {
+  name = "file_upload-dead-letter-topic-${terraform.workspace}"
+}
+
 resource "google_pubsub_subscription" "file_upload_sub" {
   name  = "genvidea-file-uploaded-${terraform.workspace}"
   topic = google_pubsub_topic.file_upload.name
@@ -22,6 +26,7 @@ resource "google_pubsub_subscription" "file_upload_sub" {
   }
   
   dead_letter_policy {
+    dead_letter_topic = google_pubsub_topic.file_upload_dead_letter.id
     max_delivery_attempts = 5
   }
 
