@@ -37,7 +37,7 @@ async def file_uploaded_webhook(request: Request, db: db_dependency):
         print(json_message)
 
         # Update all entries where id matches target_id
-        db.query(File).filter(File.id == id).update({"is_uploaded": True})
+        db.query(File).filter(File.uuid == id).update({"is_uploaded": True})
         db.commit()
 
         # Respond to indicate successful processing
