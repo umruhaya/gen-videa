@@ -12,8 +12,8 @@ def use_gpt4_vision(video) -> str:
         success, frame = video.read()
         if not success:
             break
-        _, buffer = cv2.imencode(".jpg", frame)
-        base64Frames.append(base64.b64encode(buffer).decode("utf-8"))
+        # _, buffer = cv2.imencode(".jpg", frame)
+        # base64Frames.append(base64.b64encode(buffer).decode("utf-8"))
 
     video.release()
 

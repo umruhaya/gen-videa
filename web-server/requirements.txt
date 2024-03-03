@@ -9,5 +9,6 @@ python-multipart
 python-jose
 passlib
 openai
-opencv-python-headless
+# opencv-python-headless
 google-cloud-storage
+# psycopg2-binary # for local dev
