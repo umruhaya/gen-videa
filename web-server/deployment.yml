@@ -14,6 +14,7 @@ spec:
       labels:
         app: web-server
     spec:
+      terminationGracePeriodSeconds: 300 # 5 minutes :)
       nodeSelector:
         # can only be scheduled on a node that belongs to a `general-node-pool` node pool 
         cloud.google.com/gke-nodepool: general-node-pool
@@ -46,7 +47,6 @@ spec:
             port: 8080
           initialDelaySeconds: 15
           periodSeconds: 20
-        terminationGracePeriodSeconds: 300 # 5 minutes :)
         
       # Sidecar Container for Cloud SQL Proxy
       - name: cloud-sql-proxy
