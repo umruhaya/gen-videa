@@ -51,7 +51,7 @@ export default function SignUpComponent() {
 
         switch (response.status) {
             case 201:
-                    window.location.href = "/signin?signup=success"
+                window.location.href = "/signin?signup=success"
                 break
             case 409:
                 form.setError("email", {
@@ -76,52 +76,95 @@ export default function SignUpComponent() {
     }
 
     return (
-        <Form {...form}>
-            <form onSubmit={form.handleSubmit(onValidSubmit, onInvalidSubmit)} className="md:w-96 p-8 bg-secondary">
-                <FormField
-                    control={form.control}
-                    name="username"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Username</FormLabel>
-                            <FormControl>
-                                <Input placeholder="Umer Naeem" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
+        <>
+            <nav className="Nav px-1 py-0 flex justify-between items-center w-full">
+                <div className="Nav-brand">
+                    <h4 className="text-2xl md:text-5xl font-bold dark:text-white">
+                        GenVidea
+                    </h4>
+                </div>
 
-                <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Email</FormLabel>
-                            <FormControl>
-                                <Input placeholder="user@example.com" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
+                <div className="flex items-center">
+                    <a href="/">
+                        <button className="bg-white dark:bg-slate-900 text-black dark:text-white border-neutral-200 dark:border-slate-800">
+                            Home
+                        </button>
+                        <button className="text-white ml-4 px-3 py-1 rounded-md hover:bg-gray-700 transition-colors">
+                            <i className="fas fa-cog"></i>
+                        </button>
+                    </a>
+                </div>
+            </nav>
 
-                <FormField
-                    control={form.control}
-                    name="password"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Password</FormLabel>
-                            <FormControl>
-                                <Input type="password" placeholder="*********" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
+            <section className="w-screen h-screen grid place-items-center">
 
-                <Button className="mt-4" type="submit">Submit</Button>
-            </form>
-        </Form>
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onValidSubmit, onInvalidSubmit)} className="md:w-96 p-8 bg-secondary">
+                        <FormField
+                            control={form.control}
+                            name="username"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Username</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="Umer Naeem" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )} />
+
+                        <FormField
+                            control={form.control}
+                            name="email"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Email</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="user@example.com" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )} />
+
+                        <FormField
+                            control={form.control}
+                            name="password"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Password</FormLabel>
+                                    <FormControl>
+                                        <Input type="password" placeholder="*********" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )} />
+
+                        <Button className="mt-4" type="submit">Submit</Button>
+                    </form>
+                </Form>
+                <div>
+                    <style>{`
+                .signin-link {
+                    color: #1f9eff;
+                    text-decoration: underline;
+                }
+
+                .signin-link:hover {
+                    color: #0060a9;
+                    text-decoration: none;
+                }
+            `}</style>
+
+                    <div>
+                        <p>Don't have an account?{' '}
+                            <a href="/signin" className="signin-link">
+                                Sign in
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+        </>
     )
 }

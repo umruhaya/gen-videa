@@ -1,0 +1,69 @@
+/* UploadPage.css */
+.upload-page-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  background-color: #000000; /* Light grey background */
+  height: 100vh; /* Full viewport height */
+}
+
+.upload-form-container {
+  background: #ffffff;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  width: 50%; /* Adjust based on your design preference */
+  max-width: 500px; /* Maximum width of the form */
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center align items */
+}
+
+.image-preview-container {
+  width: 100%; /* Full width of the container */
+  border-radius: 20px;
+  margin-bottom: 20px;
+  overflow: hidden; /* Ensures the image doesn't bleed outside the border-radius */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  height: 250px; /* Fixed height for your image */
+  /*background-image: url('https://via.placeholder.com/500'); Placeholder image */
+  background-size: cover;
+  background-position: center;
+}
+
+.file-input {
+  margin-bottom: 20px;
+  cursor: pointer;
+}
+
+.caption-input {
+  width: 100%;
+  margin-bottom: 20px;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 30px;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+  outline: none;
+}
+
+.submit-button {
+  background-color: #007bff;
+  color: white;
+  padding: 15px 30px;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: bold;
+  text-transform: uppercase; /* Uppercase button text */
+  letter-spacing: 1px; /* Spacing between letters */
+  transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transition for hover effect */
+}
+
+.submit-button:hover {
+  background-color: #0056b3; /* Darker shade on hover for the button */
+  transform: translateY(-2px); /* Slight lift on hover */
+}
