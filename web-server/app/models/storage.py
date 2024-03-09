@@ -10,8 +10,8 @@ class FileType(enum.Enum):
     document = 'document'
 
 class FileSource(enum.Enum):
-    user_upload = 'user-upload'
-    system_generated = 'system-generated'
+    user_upload = 'user_upload'
+    system_generated = 'system_generated'
 
 class File(Base):
     __tablename__ = 'file'

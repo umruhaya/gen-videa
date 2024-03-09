@@ -2,7 +2,7 @@ import asyncio
 import os
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request, Response
-from app.routers import auth, webhook, files
+from app.routers import auth, webhook, files, openai, profile
 from app.dependencies import user_dependency, db_dependency
 from app.models import User
 from app.responses import unauthorized_response
@@ -31,7 +31,7 @@ async def lifespan(app: FastAPI):
     # Startup logic
     # For example, loading models, databases connections etc.
     print("Application startup")
-    
+
     yield  # Yield control to the application until shutdown
     
     app_context["is_shutting_down"] = True
@@ -46,6 +46,8 @@ app = FastAPI(lifespan=lifespan)
 app.include_router(auth.router)
 app.include_router(webhook.router)
 app.include_router(files.router)
+app.include_router(openai.router)
+app.include_router(profile.router)
 
 @app.get("/")
 async def root():

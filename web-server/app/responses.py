@@ -11,3 +11,10 @@ conflict_response = {
         "application/json": {"example": {"detail": "Email already exists."}}
     }
 }
+
+not_found_response = {
+    "description": "Error: Not Found",
+    "content": {
+        "application/json": {"example": {"detail": "Item not found."}}
+    }
+}

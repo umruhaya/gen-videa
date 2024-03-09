@@ -29,6 +29,8 @@ Dockerfile              # Docker configuration for containerization
 # set path to GCP credentials
 GOOGLE_APPLICATION_CREDENTIALS="/path/to/keyfile.json"
 cloud-sql-proxy jetrr-vision:us-central1:postgres-instance-genvidea-default
+
+# in another terminal, run
 uvicorn app.main:app 
 # or (for dev)
 uvicorn app.main:app --reload

@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from typing import Annotated
 from datetime import timedelta
-from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from app.schemas.auth_schema import CreateUserRequest, Token, OAuth2EmailPasswordRequestForm
 from app.services.auth_service import authenticate_user, create_access_token, oauth2_bearer
