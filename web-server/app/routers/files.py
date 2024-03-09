@@ -1,10 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
-from app.services.storage_service import generate_put_presigned_url
+from app.services.storage_service import generate_put_presigned_url, generate_get_presigned_url
 from app.settings import settings as env
-from app.models import File
-from app.settings import Setting
+from app.models.storage import File, FileSource
+from app.models.user import User
 from app.dependencies import db_dependency, user_dependency
+from app.responses import unauthorized_response, not_found_response
 from pydantic import BaseModel
+from typing import List
 import mimetypes
 import uuid
 import os
@@ -26,8 +28,11 @@ def get_file_type(extension: str):
     else:
         return None
 
-@router.post("/create-file-upload-url")
-def create_file_upload_url(db: db_dependency, user: user_dependency, file: FileUploadRequest):
+@router.post("/create-file-upload-url", 
+    responses={400: {"description": "Bad Request"}}, 
+    description="Create a pre-signed URL for a file upload.\nAllowed file types: .jpg, .jpeg, .png, .gif, .mp4, .mov, .avi, .mkv",
+)
+async def create_file_upload_url(db: db_dependency, user: user_dependency, file: FileUploadRequest):
 
     mime_type, _ = mimetypes.guess_type(f'file{file.extension}')
     id = str(uuid.uuid4())
@@ -58,3 +63,127 @@ def create_file_upload_url(db: db_dependency, user: user_dependency, file: FileU
     url = generate_put_presigned_url(BUCKET_NAME, name, mime_type)
 
     return url
+
+class FileInfo(BaseModel):
+    uuid: str
+    name: str
+    extension: str
+    content_type: str
+    is_uploaded: bool
+    is_public: bool
+    url: str
+
+@router.get("/list-user-uploads", 
+    responses={401: {"description": "Unauthorized"}}, 
+    description="List all files uploaded by the user."
+)
+async def list_user_uploads(db: db_dependency, user: user_dependency, public_only: bool = False, uploaded_only: bool = True) -> List[FileInfo]:
+    db_files = db.query(File).filter(
+        File.user_email == user["email"],
+        File.source == FileSource.user_upload,
+        File.is_uploaded == (True if uploaded_only else File.is_uploaded),
+        File.is_public == (True if public_only else File.is_public),
+    ).all()
+    files = [FileInfo(
+                uuid=file.uuid,
+                name=file.human_readable_name,
+                extension=file.extension,
+                content_type=file.content_type,
+                is_uploaded=file.is_uploaded,
+                is_public=file.is_public,
+                url=generate_get_presigned_url(file.bucket, file.name),
+            ) for file in db_files]
+    return files
+
+@router.get("/list-system-generations", 
+    responses={401: {"description": "Unauthorized"}}, 
+    description="List all generated files by the system/ai."
+)
+async def list_system_generations(db: db_dependency, user: user_dependency, public_only: bool = False) -> List[FileInfo]:
+    db_files = db.query(File).filter(
+        File.user_email == user["email"],
+        File.source == FileSource.system_generated,
+        File.is_public == (True if public_only else File.is_public),
+    ).all()
+    files = [FileInfo(
+                uuid=file.uuid,
+                name=file.human_readable_name,
+                extension=file.extension,
+                content_type=file.content_type,
+                is_uploaded=file.is_uploaded,
+                is_public=file.is_public,
+                url=generate_get_presigned_url(file.bucket, file.name),
+            ) for file in db_files]
+    return files
+
+class PublicFileInfo(FileInfo):
+    username: str
+    email: str
+
+@router.get("/list-public-uploads", 
+    responses={401: {"description": "Unauthorized"}}, 
+    description="List all the public uploads by the users."
+)
+async def list_user_uploads(db: db_dependency, user: user_dependency, uploaded_only: bool = True) -> List[PublicFileInfo]:
+    db_files = db.query(File, User).join(User, File.user_email == User.email).filter(
+        File.user_email == user["email"],
+        File.is_uploaded == (True if uploaded_only else File.is_uploaded),
+        File.is_public == True
+    ).all()
+    files = [PublicFileInfo(
+                uuid=file.uuid,
+                name=file.human_readable_name,
+                extension=file.extension,
+                content_type=file.content_type,
+                is_uploaded=file.is_uploaded,
+                is_public=file.is_public,
+                url=generate_get_presigned_url(file.bucket, file.name),
+                username=user.username,
+                email=user.email,
+            ) for file, user in db_files]
+    return files
+
+
+@router.patch("/upload-visibility", responses={401: {"description": "Unauthorized"}, 404: {"description": "File not found"}})
+async def upload_visibility(db: db_dependency, user: user_dependency, file_id: str, is_public: bool) -> Response:
+    # Attempt to fetch the file with the given ID and user's email
+    file = db.query(File).filter(File.uuid == file_id, File.user_email == user["email"]).first()
+    
+    # Check if the file exists
+    if not file:
+        # If the file does not exist, return a 404 Not Found response
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="File not found.")
+    
+    # If the file exists, update its visibility
+    file.is_public = is_public
+    db.commit()
+    
+    # Return a success response
+    return Response(status_code=status.HTTP_200_OK, content="Visibility updated.", media_type="text/plain")
+
+
+
+class FileVisibilityUpdateRequest(BaseModel):
+    file_id: str
+    is_public: bool
+
+@router.patch("/update-file-visibility", responses={401: unauthorized_response, 404: not_found_response})
+async def upload_visibility(db: db_dependency, user: user_dependency, file_request: FileVisibilityUpdateRequest) -> Response:
+    file_id, is_public = file_request.file_id, file_request.is_public
+   
+    print(f"file_id: {file_id}, is_public: {is_public}")
+
+    # Attempt to fetch the file with the given ID and user's email
+    file = db.query(File).filter(File.uuid == file_id, File.user_email == user["email"]).first()
+    
+    # Check if the file exists
+    if not file:
+        # If the file does not exist, return a 404 Not Found response
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="File not found.")
+    
+    # If the file exists, update its visibility
+    file.is_public = is_public
+    db.commit()
+    
+    # Return a success response
+    return Response(status_code=status.HTTP_200_OK, content="Visibility updated.", media_type="text/plain")

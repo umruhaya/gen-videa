@@ -5,6 +5,6 @@ from app.services.auth_service import get_current_user
 from sqlalchemy.orm import Session
 from typing import Annotated
 
-db_dependency = Annotated[str, Depends(get_db)]
+db_dependency = Annotated[Session, Depends(get_db)]
 
 user_dependency = Annotated[str, Depends(get_current_user)]
