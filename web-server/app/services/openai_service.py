@@ -1,7 +1,6 @@
-from openai import OpenAI
-import cv2
-import base64
+from openai import OpenAI, BadRequestError
 from io import BytesIO
+# import cv2
 from app.schemas.openai_schema import TTSVOICEMODEL
 
 client = OpenAI()
@@ -44,3 +43,21 @@ def use_tts(text, voice_model: TTSVOICEMODEL) -> str:
         voice=voice_model,
         input=text
     )
+
+    # to be implemented
+    pass
+
+def use_dalle3(prompt: str) -> str:
+
+    response = client.images.generate(
+        model="dall-e-3",
+        prompt=prompt,
+        size="1024x1024",
+        quality="standard",
+        n=1,
+        response_format="b64_json"
+    )
+
+    b64_json = response.data[0].b64_json
+
+    return b64_json
