@@ -27,9 +27,13 @@ def get_file_type(extension: str):
         return 'video'
     else:
         return None
+    
+class FileUrlResponse(BaseModel):
+    url: str
 
 @router.post("/create-file-upload-url", 
     responses={400: {"description": "Bad Request"}}, 
+    response_model=FileUrlResponse,
     description="Create a pre-signed URL for a file upload.\nAllowed file types: .jpg, .jpeg, .png, .gif, .mp4, .mov, .avi, .mkv",
 )
 async def create_file_upload_url(db: db_dependency, user: user_dependency, file: FileUploadRequest):
@@ -62,7 +66,7 @@ async def create_file_upload_url(db: db_dependency, user: user_dependency, file:
 
     url = generate_put_presigned_url(BUCKET_NAME, name, mime_type)
 
-    return url
+    return FileUrlResponse(url=url)
 
 class FileInfo(BaseModel):
     uuid: str
