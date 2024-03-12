@@ -1,6 +1,7 @@
 ---
 import Layout from "@/layouts/Layout.astro";
-import UserSettings from "../components/UserSettings.tsx";
+import Header from "@/components/Header";
+import UserSettings from "@/components/UserSettings";
 
 export const prerender = false;
 if (Astro.cookies.has("access_token") === false) {
@@ -8,10 +9,9 @@ if (Astro.cookies.has("access_token") === false) {
 }
 ---
 
-<Layout title="Upload - GenVidea">
-  <main class="w-screen h-screen grid place-items-center">
-    <div class="bg-gray-100 flex items-center justify-center p-4">
-      <UserSettings client:load/>
-    </div>
+<Layout title="Settings - GenVidea">
+  <Header isLoggedIn={true} client:load />
+  <main class="grid place-items-center mt-24">
+    <UserSettings client:load />
   </main>
 </Layout>

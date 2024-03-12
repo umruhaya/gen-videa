@@ -1,134 +1,115 @@
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useEffect } from "react"
+import { useForm, type FieldErrors } from "react-hook-form"
+import { z } from "zod"
+import { Button } from "@/components/ui/button"
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import type { BaseSyntheticEvent } from "react"
+import { ToastAction } from "@/components/ui/toast"
+import { useToast } from "@/components/ui/use-toast"
+import { Toaster } from "./ui/toaster"
 
-import React, { useState } from 'react';
-import '../styles/UserSettings.css';
 
-const Settings: React.FC = () => {
-  const [name, setName] = useState('');
-  const [username, setUsername] = useState('');
-  const [profilePicture, setProfilePicture] = useState<File | null>(null);
-  const [profilePictureUrl, setProfilePictureUrl] = useState<string>('');
+const formSchema = z.object({
+  username: z.string().min(3, {
+    message: "Username must be at least 3 characters.",
+  }).max(32, {
+    message: "Username must be at most 32 characters.",
+  }),
+})
 
-  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setName(event.target.value);
-  };
 
-  const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setUsername(event.target.value);
-  };
+export default function SignInComponent() {
 
-  const handleProfilePictureChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files ? event.target.files[0] : null;
-    setProfilePicture(file);
+  const { toast } = useToast()
 
-    if (file) {
-      setProfilePictureUrl(URL.createObjectURL(file));
-    } else {
-      setProfilePictureUrl('');
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      username: "",
+    },
+  })
+
+  // 2. Define a submit handler.
+  async function onValidSubmit(values: z.infer<typeof formSchema>, e?: BaseSyntheticEvent<object, any, any>) {
+
+    e?.preventDefault()
+
+    const response = await fetch("/api/profile/user-settings", {
+      method: "POST",
+      body: JSON.stringify(values),
+      headers: {
+        "Content-Type": "application/json",
+      }
+    })
+    if (response.ok) {
+      const data = await response.json()
+      console.debug(data)
+      toast({
+        title: "Action Successful.",
+        description: `Your username was updated to ${form.getValues("username")}`,
+        action: (
+          <ToastAction altText="Ack">Ok</ToastAction>
+        )
+      })
+      return
     }
-  };
 
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
+    switch (response.status) {
+      case 409:
+        window.location.reload()
+        break
+      case 422:
+        console.debug(response)
+        break
+    }
+  }
 
-    console.log({ name, username, profilePicture });
-    alert('Profile updated! (Frontend only, no data sent)');
-  };
+  function onInvalidSubmit(errors: FieldErrors<z.infer<typeof formSchema>>) {
+    form.setError("username", {
+      type: "manual",
+      message: errors.username?.message,
+    })
+  }
 
-//   return (
-//     <div className="max-w-md mx-auto mt-10 bg-white p-8 border border-gray-200 rounded-lg shadow-lg">
-//       <form onSubmit={handleSubmit} className="space-y-6">
-//         <div>
-//           <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
-//           <input
-//             type="text"
-//             id="name"
-//             value={name}
-//             onChange={handleNameChange}
-//             className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
-//             placeholder="Your name"
-//           />
-//         </div>
+  return (
+    <>
 
-//         <div>
-//           <label htmlFor="username" className="block text-sm font-medium text-gray-700">Username</label>
-//           <input
-//             type="text"
-//             id="username"
-//             value={username}
-//             onChange={handleUsernameChange}
-//             className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
-//             placeholder="Your username"
-//           />
-//         </div>
+      <section className="grid place-items-center">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onValidSubmit, onInvalidSubmit)} className="md:w-96 p-8 bg-secondary">
+            <a href="/dashboard"><p className="text-sm underline">Go Back to Dashboard</p></a>
+            <h1 className="text-bold text-4xl mb-8">
+              Update User Settings
+            </h1>
+            <FormField
+              control={form.control}
+              name="username"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Username</FormLabel>
+                  <FormControl>
+                    <Input placeholder="FunkyRabit" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-//         <div>
-//           <label htmlFor="profile-picture" className="block text-sm font-medium text-gray-700">Profile Picture</label>
-//           <input
-//             type="file"
-//             id="profile-picture"
-//             onChange={handleProfilePictureChange}
-//             className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100"
-//           />
-//           {profilePictureUrl && (
-//             <img src={profilePictureUrl} alt="Profile preview" className="mt-4 h-20 w-20 object-cover rounded-full"/>
-//           )}
-//         </div>
-
-//         <button type="submit" className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-//           Save Changes
-//         </button>
-//       </form>
-//     </div>
-//   );
-// };
-
-return (
-  <div className="settings-wrapper">
-    <div className="settings-header">
-      <h1>Edit Profile</h1>
-      <button className="close-button">&times;</button>
-    </div>
-    <form onSubmit={handleSubmit} className="settings-form">
-      <div className="form-field">
-        <label htmlFor="name">Name</label>
-        <input
-          type="text"
-          id="name"
-          value={name}
-          onChange={handleNameChange}
-          placeholder="Your name"
-        />
-      </div>
-      <div className="form-field">
-        <label htmlFor="username">Username</label>
-        <input
-          type="text"
-          id="username"
-          value={username}
-          onChange={handleUsernameChange}
-          placeholder="Your username"
-        />
-      </div>
-      <div className="form-field">
-        <label htmlFor="profile-picture">Profile Picture</label>
-        <input
-          type="file"
-          id="profile-picture"
-          onChange={handleProfilePictureChange}
-        />
-        {profilePictureUrl && (
-          <div className="profile-picture-preview">
-            <img src={profilePictureUrl} alt="Profile preview"/>
-          </div>
-        )}
-      </div>
-      <div className="form-actions">
-        <button type="button" className="cancel-button">Cancel</button>
-        <button type="submit" className="save-button">Save</button>
-      </div>
-    </form>
-  </div>
-);
-};
-
-export default Settings;
+            <Button className="mt-4" type="submit">Save</Button>
+          </form>
+        </Form>
+      </section>
+      <Toaster />
+    </>
+  )
+}
