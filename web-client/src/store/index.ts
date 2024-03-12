@@ -11,4 +11,17 @@ type FileUpload = {
 
 export const fileUpload = atom<FileUpload | null>(null)
 
+type DalleGenerate = {
+    state: "idle" | "generating" | "done" | "error";
+    prompt: string;
+}
+
+export const dalleGenerate = atom<DalleGenerate>({
+    state: "idle",
+    prompt: ""
+})
+
 export const isFileUploadDialogOpen = atom(false)
+
+export const isDalleGenerateDialogOpen = atom(false)
+

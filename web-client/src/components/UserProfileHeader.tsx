@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useQuery, QueryClient } from "@tanstack/react-query"
-import FileUploadDialog from "@/components/FileUploadDialog";
+import { SettingsIcon } from "lucide-react";
 
 const queryFn = async () => {
   const response = await fetch("/api/profile/user-settings")
@@ -21,7 +21,7 @@ export default function UserProfileHeader() {
   const { data, isLoading } = useQuery<UserSettingsData>({ queryKey: ["userSettings"], queryFn }, queryClient)
 
   return (
-    <section className="bg-zinc-800 p-8">
+    <section className="p-8">
       <h1 className="text-4xl font-bold mb-2">Profile</h1>
       <p className="text-2xl font-semibold">Username: {data?.username}</p>
       <p className="italic">Hey there! Im using GenVidea</p>
@@ -29,10 +29,9 @@ export default function UserProfileHeader() {
       <div className="flex gap-4">
         <a href="/settings">
           <Button>
-            Edit Profile
+            <SettingsIcon size={24} />
           </Button>
         </a>
-        <FileUploadDialog />
       </div>
     </section>
   )

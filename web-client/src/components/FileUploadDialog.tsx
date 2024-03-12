@@ -15,7 +15,11 @@ import { ToastAction } from "@/components/ui/toast"
 import { useToast } from "@/components/ui/use-toast"
 import { Toaster } from "./ui/toaster"
 
-export default function FileUploadDialog() {
+type FileUploadDialogProps = {
+    invalidate: () => void
+}
+
+export default function FileUploadDialog({ invalidate }: FileUploadDialogProps) {
 
     const $isOpen = useStore(isFileUploadDialogOpen)
     const $fileUpload = useStore(fileUpload)
@@ -70,6 +74,7 @@ export default function FileUploadDialog() {
                 })
                 fileUpload.set(null)
                 isFileUploadDialogOpen.set(false)
+                invalidate()
             } else {
                 toast({
                     title: "File upload failed.",
@@ -133,7 +138,6 @@ export default function FileUploadDialog() {
                 )}
                 <DialogFooter>
                     <Button onClick={handleFileUpload}>Upload</Button>
-                    <button onClick={() => console.debug($fileUpload)}>test</button>
                 </DialogFooter>
             </DialogContent>
             <Toaster />

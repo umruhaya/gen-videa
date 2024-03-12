@@ -1,6 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import VideoGallery from "@/components/VideoGallery.tsx";
+import MediaGrid from "@/components/MediaGrid.tsx";
 import UserProfileHeader from "@/components/UserProfileHeader.tsx";
 import Header from "../components/Header.tsx";
 
@@ -14,6 +14,6 @@ if (Astro.cookies.has("access_token") === false) {
   <Header isLoggedIn={true} client:load />
   <main class="w-screen flex flex-col justify-center pt-12 px-12 md:px-64">
     <UserProfileHeader client:load />
-    <VideoGallery client:load />
+    <MediaGrid client:load />
   </main>
 </Layout>
