@@ -152,7 +152,7 @@ export default function SignUpComponent() {
                         <Button className="mt-4" type="submit">Submit</Button>
                     </form>
                 </Form>
-                <div>
+                <div style={{ marginBottom: '60px' }}>
                     <style>{`
                 .signin-link {
                     color: #1f9eff;
@@ -165,13 +165,11 @@ export default function SignUpComponent() {
                 }
             `}</style>
 
-                    <div>
-                        <p>Already have an account?{' '}
-                            <a href="/signin" className="signin-link">
-                                Sign in
-                            </a>
-                        </p>
-                    </div>
+                    <p>Already have an account?{' '}
+                        <a href="/signin" className="signin-link">
+                            Sign in
+                        </a>
+                    </p>
                 </div>
             </section>
 
