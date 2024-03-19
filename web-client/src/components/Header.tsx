@@ -3,9 +3,10 @@ import { Button } from "@/components/ui/button";
 
 type HeaderProps = {
     isLoggedIn: boolean;
+    showHomeButton?: boolean; 
 }
 
-function Header({ isLoggedIn }: HeaderProps = { isLoggedIn: true }) {
+function Header({ isLoggedIn, showHomeButton = false }: HeaderProps = { isLoggedIn: true }) {
 
     const handleLogout = async () => {
         const response = await fetch("/api/auth/logout", {
@@ -16,19 +17,30 @@ function Header({ isLoggedIn }: HeaderProps = { isLoggedIn: true }) {
     }
 
     return (
-        <header className="p-4 flex bg-secondary">
+        <header className="p-4 bg-secondary w-full">
 
-            <nav className="Nav px-4 py-2 flex justify-between items-center w-full">
+            <nav className="flex justify-between items-center w-full">
+                <div className="flex items-center space-x-4">
                 <ModeToggle />
+                {showHomeButton && (
+                    <a href="/">
+                        <Button
+                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                        >
+                            Home
+                        </Button>
+                    </a>
+                )}
+                </div>
 
-                {isLoggedIn && <div className="flex items-center">
+                {isLoggedIn && (
                     <Button
                         onClick={handleLogout}
                         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                     >
                         Logout
                     </Button>
-                </div>}
+                )}
             </nav>
 
         </header>
