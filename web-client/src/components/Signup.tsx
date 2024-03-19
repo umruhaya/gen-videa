@@ -19,7 +19,19 @@ const formSchema = z.object({
     email: z.string().email(),
     password: z.string().min(8, {
         message: "Password must be at least 8 characters.",
-    }),
+    })
+        .refine((val) => /[A-Z]/.test(val), {
+            message: "Password must contain at least one uppercase letter.",
+        })
+        .refine((val) => /[a-z]/.test(val), {
+            message: "Password must contain at least one lowercase letter.",
+        })
+        .refine((val) => /\d/.test(val), {
+            message: "Password must contain at least one digit.",
+        })
+        .refine((val) => /[!@#$%^&*(),.?":{}|<>]/.test(val), {
+            message: "Password must contain at least one special character.",
+        }),
 })
 
 
@@ -33,6 +45,8 @@ export default function SignUpComponent() {
             password: "",
         },
     })
+
+    const watchedPassword = form.watch("password")
 
     // 2. Define a submit handler.
     async function onValidSubmit(values: z.infer<typeof formSchema>, e?: BaseSyntheticEvent<object, any, any>) {
@@ -115,14 +129,25 @@ export default function SignUpComponent() {
                             control={form.control}
                             name="password"
                             render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Password</FormLabel>
-                                    <FormControl>
-                                        <Input type="password" placeholder="*********" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )} />
+                                <>
+                                    <FormItem>
+                                        <FormLabel>Password</FormLabel>
+                                        <FormControl>
+                                            <Input type="password" placeholder="*********" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                    <ul style={{ marginTop: "4px" }}>
+                                        <li style={{ color: watchedPassword.length >= 8 ? 'green' : 'red', fontSize: '0.6rem' }}>At least 8 characters</li>
+                                        <li style={{ color: /[A-Z]/.test(watchedPassword) ? 'green' : 'red', fontSize: '0.6rem' }}>At least one uppercase letter</li>
+                                        <li style={{ color: /[a-z]/.test(watchedPassword) ? 'green' : 'red', fontSize: '0.6rem' }}>At least one lowercase letter</li>
+                                        <li style={{ color: /\d/.test(watchedPassword) ? 'green' : 'red', fontSize: '0.6rem' }}>At least one digit</li>
+                                        <li style={{ color: /[!@#$%^&*(),.?":{}|<>]/.test(watchedPassword) ? 'green' : 'red', fontSize: '0.6rem' }}>At least one special character</li>
+                                    </ul>
+                                </>
+                            )}
+                        />
+
 
                         <Button className="mt-4" type="submit">Submit</Button>
                     </form>
