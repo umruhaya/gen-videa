@@ -68,7 +68,7 @@ export default function DalleGenerateDialog({ invalidate }: DalleGenerateProps) 
 
     // https://www.radix-ui.com/primitives/docs/components/dialog#api-reference
     return (
-        <Dialog open={$isOpen} onOpenChange={(open) => isDalleGenerateDialogOpen.set(open)}>
+        <Dialog open={$isOpen} onOpenChange={(open : any) => isDalleGenerateDialogOpen.set(open)}>
             <DialogTrigger>
                 <Button>Generate</Button>
             </DialogTrigger>

@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useQuery, QueryClient } from "@tanstack/react-query"
-import { SettingsIcon } from "lucide-react";
+import { SettingsIcon, User } from "lucide-react";
+import UserSettingsDialog from "./UserSettingsDialog";
 
 const queryFn = async () => {
   const response = await fetch("/api/profile/user-settings")
@@ -27,11 +28,7 @@ export default function UserProfileHeader() {
       <p className="italic">Hey there! Im using GenVidea</p>
       <hr className="my-2" />
       <div className="flex gap-4">
-        <a href="/settings">
-          <Button>
-            <SettingsIcon size={24} />
-          </Button>
-        </a>
+        <UserSettingsDialog />
       </div>
     </section>
   )
