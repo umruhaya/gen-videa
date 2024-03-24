@@ -19,7 +19,7 @@ const queryClient = new QueryClient()
 
 export default function UserProfileHeader() {
 
-  const { data, isLoading } = useQuery<UserSettingsData>({ queryKey: ["userSettings"], queryFn }, queryClient)
+  const { data, isLoading, refetch: refetchUserSettings } = useQuery<UserSettingsData>({ queryKey: ["userSettings"], queryFn }, queryClient)
 
   return (
     <section className="p-8">
@@ -28,7 +28,7 @@ export default function UserProfileHeader() {
       <p className="italic">Hey there! Im using GenVidea</p>
       <hr className="my-2" />
       <div className="flex gap-4">
-        <UserSettingsDialog />
+        <UserSettingsDialog invalidate={refetchUserSettings}/>
       </div>
     </section>
   )
