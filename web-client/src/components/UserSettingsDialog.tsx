@@ -23,12 +23,15 @@ import {
 import { Toaster } from './ui/toaster';
 
 
+type Props = {
+    invalidate: () => void
+}
 
 const formSchema = z.object({
     username: z.string().min(3).max(32),
 });
 
-export default function UserSettingsDialog() {
+export default function UserSettingsDialog({invalidate} : Props) {
     const $isOpen = useStore(isUserSettingsDialogOpen);
     const $settings = useStore(userSettings);
     const { toast } = useToast();
@@ -41,7 +44,7 @@ export default function UserSettingsDialog() {
         resolver: zodResolver(formSchema),
     });
 
-    const onValidSubmit = async (data: any) => {
+    const onSubmit = async (data: any) => {
         const response = await fetch("/api/profile/user-settings", {
             method: "POST",
             headers: {
@@ -57,6 +60,9 @@ export default function UserSettingsDialog() {
                 description: "Your username has been updated.",
                 action: <ToastAction altText="Ack">Ok</ToastAction>
             });
+          
+            //retching the user settings after the update
+            invalidate();
         } else {
             userSettings.set({ ...$settings, state: "error" });
             toast({
@@ -95,7 +101,7 @@ export default function UserSettingsDialog() {
                 <Label htmlFor="username">New Username</Label>
                 <Input id="username" {...register("username")} defaultValue={$settings.username} placeholder='FunkyRabbit' />
                 <DialogFooter>
-                    <Button type="submit" onClick={handleSubmit(onValidSubmit, onInvalidSubmit)}>Save</Button>
+                    <Button type="submit" onClick={handleSubmit(onSubmit, onInvalidSubmit)}>Save</Button>
                 </DialogFooter>
             </DialogContent>
             <Toaster />
