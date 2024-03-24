@@ -27,7 +27,6 @@ type Props = {
     invalidate: () => void
 }
 
-
 const formSchema = z.object({
     username: z.string().min(3).max(32),
 });
@@ -61,10 +60,9 @@ export default function UserSettingsDialog({invalidate} : Props) {
                 description: "Your username has been updated.",
                 action: <ToastAction altText="Ack">Ok</ToastAction>
             });
-
+          
             //retching the user settings after the update
             invalidate();
-
         } else {
             userSettings.set({ ...$settings, state: "error" });
             toast({
