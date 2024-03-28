@@ -1,0 +1,19 @@
+---
+import Layout from "../layouts/Layout.astro";
+import PublicMediaGrid from "@/components/PublicMediaGrid.tsx";
+import UserProfileHeader from "@/components/UserProfileHeader.tsx";
+import Header from "../components/Header.tsx";
+
+export const prerender = false;
+if (Astro.cookies.has("access_token") === false) {
+  return Astro.redirect("/");
+}
+---
+
+<Layout title="Genvidea">
+  <Header isLoggedIn={true} client:load />
+  <main class="w-screen flex flex-col justify-center pt-12 px-12 md:px-64">
+    <PublicMediaGrid client:load />
+  </main>
+</Layout>
+
