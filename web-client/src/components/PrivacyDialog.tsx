@@ -1,6 +1,6 @@
 // PrivacyDialog.tsx
 import React from 'react';
-
+//hehehehehehehe
 interface PrivacyDialogProps {
     isOpen: boolean;
     onClose: () => void;
