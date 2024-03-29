@@ -173,7 +173,7 @@ const userUploadsQueryFn = async () => {
     if (response.ok) {
         return response.json()
     }
-    throw new Error("Failed to fetch user data")
+    throw new Error("Failed to fetch user data.")
 }
 
 const systemGensQueryFn = async () => {
