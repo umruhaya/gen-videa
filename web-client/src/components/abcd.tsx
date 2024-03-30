@@ -1,14 +1,4 @@
-
-// ==========================================================================
-
-import React, { useState } from 'react';
 import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
-import { useQuery, QueryClient } from "@tanstack/react-query"
-import FileUploadDialog from "@/components/FileUploadDialog";
-import DalleGenerateDialog from "./DalleGenerateDialog";
-import PrivacyDialog from "./PrivacyDialog"; // Import PrivacyDialog component
-
-
 import {
     IconArrowWaveRightUp,
     IconBoxAlignRightFilled,
@@ -18,14 +8,16 @@ import {
     IconSignature,
     IconTableColumn,
 } from "@tabler/icons-react";
-
+import { useQuery, QueryClient } from "@tanstack/react-query"
+import FileUploadDialog from "@/components/FileUploadDialog";
+import DalleGenerateDialog from "./DalleGenerateDialog";
 
 const userUploadsQueryFn = async () => {
     const response = await fetch("/api/files/list-user-uploads")
     if (response.ok) {
         return response.json()
     }
-    throw new Error("Failed to fetch user data.")
+    throw new Error("Failed to fetch user data")
 }
 
 const systemGensQueryFn = async () => {
@@ -44,14 +36,7 @@ type UserMedia = {
     url: string
     is_uploaded: boolean
     is_processed: boolean
-    is_public: boolean;
 }
-type PrivacyDialogProps = {
-    isOpen: boolean;
-    onClose: () => void;
-    file?: UserMedia; // Make 'file' prop optional
-    onVisibilityChange: (fileId: string, isPublic: boolean) => void;
-};
 
 const icons = [
     <IconClipboardCopy className="h-4 w-4 text-neutral-500" />,
@@ -66,82 +51,21 @@ const icons = [
 const queryClient = new QueryClient()
 
 export default function MediaGrid() {
-    const [privacyDialogOpen, setPrivacyDialogOpen] = useState(false);
-    const [selectedFile, setSelectedFile] = useState<UserMedia | null>(null);
 
-    const RedCircleIcon = ({ className }: { className: string }) => (
-        <svg className={`h-6 w-6 text-red-500 ${className}`} fill="currentColor" viewBox="0 0 20 20">
-            <circle cx="10" cy="10" r="10" />
-        </svg>
-    );
-    
-    const GreenCircleIcon = ({ className }: { className: string }) => (
-        <svg className={`h-6 w-6 text-green-500 ${className}`} fill="currentColor" viewBox="0 0 20 20">
-            <circle cx="10" cy="10" r="10" />
-        </svg>
-    );
-    
-
-    const { data: systemGenerationsData, refetch: refetchGenerations } = useQuery<UserMedia[]>({ queryKey: ["systemMedia"], queryFn: systemGensQueryFn }, queryClient);
-    const { data: userUploadsData, refetch: refetchUploads } = useQuery<UserMedia[]>({ queryKey: ["userMedia"], queryFn: userUploadsQueryFn }, queryClient);
+    const { data: systemGenerationsData, refetch: refetchGenerations } = useQuery<UserMedia[]>({ queryKey: ["systemMedia"], queryFn: systemGensQueryFn }, queryClient)
+    const { data: userUploadsData, refetch: refetchUploads } = useQuery<UserMedia[]>({ queryKey: ["userMedia"], queryFn: userUploadsQueryFn }, queryClient)
 
     const systemGenerations = systemGenerationsData ? systemGenerationsData.map(item => ({
         title: item.name,
         header: <img src={item.url} alt={item.name} className="w-full h-full object-cover rounded-xl" />,
         icon: icons[Math.floor(Math.random() * icons.length)]
-    })) : items;
+    })) : items
 
-    const userUploads = userUploadsData ? userUploadsData.map((item, i) => ({
+    const userUploads = userUploadsData ? userUploadsData.map(item => ({
         title: item.name,
-        header: (
-            <div className="relative" onClick={() => handlePrivacyDialogOpen(item)}>
-                <img src={item.url} alt={item.name} className="w-full h-full object-cover rounded-xl" />
-                {item.is_public ? (
-                    <GreenCircleIcon className="absolute top-0 right-0 m-1" />
-                ) : (
-                    <RedCircleIcon className="absolute top-0 right-0 m-1" />
-                )}
-            </div>
-        ),
+        header: <img src={item.url} alt={item.name} className="w-full h-full object-cover rounded-xl" />,
         icon: icons[Math.floor(Math.random() * icons.length)]
-    })) : [];
-    
-    
-
-    const handlePrivacyDialogOpen = (file: UserMedia) => {
-        setSelectedFile(file);
-        setPrivacyDialogOpen(true);
-    };
-
-    const handlePrivacyDialogClose = () => {
-        setPrivacyDialogOpen(false);
-    };
-
-    const handleVisibilityChange = async (fileId: string, isPublic: boolean) => {
-        try {
-            const response = await fetch('/api/files/update-file-visibility', {
-                method: 'PATCH', // Change this from 'POST' to 'PATCH'
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    file_id: fileId,
-                    is_public: isPublic
-                })
-            });
-    
-            if (!response.ok) {
-                const errorResponse = await response.text(); // or response.json() if the server sends JSON
-                console.error('Failed to update file visibility:', errorResponse);
-                throw new Error(`Failed to update file visibility: ${errorResponse}`);
-            }
-            console.log(`Visibility updated for file ${fileId}, response status: ${response.status}`);
-            await refetchUploads();
-        } catch (error) {
-            console.error('Error updating file visibility:', error);
-        }
-    };
-    
+    })) : items
 
     return (
         <div>
@@ -149,7 +73,7 @@ export default function MediaGrid() {
                 <div className="w-full flex justify-between my-4">
                     <h2 className="my-4 text-2xl font-bold">Generative Gallery</h2>
                     <div className="mx-4 my-auto">
-                        <DalleGenerateDialog invalidate={refetchGenerations} />
+                        <DalleGenerateDialog invalidate={refetchGenerations}/>
                     </div>
                 </div>
                 <BentoGrid className="max-w-4xl mx-auto">
@@ -165,33 +89,21 @@ export default function MediaGrid() {
                 <div className="w-full flex justify-between my-4">
                     <h2 className="my-4 text-2xl font-bold">My Uploads</h2>
                     <div className="mx-4 my-auto">
-                        <FileUploadDialog invalidate={refetchUploads} />
+                        <FileUploadDialog invalidate={refetchUploads}/>
                     </div>
                 </div>
                 <BentoGrid className="max-w-4xl mx-auto">
                     {userUploads.map((item, i) => (
                         <BentoGridItem
                             key={i}
-                            title={item.title}
-                            header={item.header}
-                            icon={item.icon}
+                            {...item}
                         />
                     ))}
                 </BentoGrid>
-
             </section>
-            {privacyDialogOpen && selectedFile && (
-                <PrivacyDialog
-                    isOpen={privacyDialogOpen}
-                    onClose={handlePrivacyDialogClose}
-                    file={selectedFile}
-                    onVisibilityChange={handleVisibilityChange}
-                />
-            )}
         </div>
     );
 }
-
 const Skeleton = () => (
     <div className="flex flex-1 w-full square-aspect min-h-[6rem] rounded-xl bg-gradient-to-br from-neutral-200 dark:from-neutral-900 dark:to-neutral-800 to-neutral-100"></div>
 );
