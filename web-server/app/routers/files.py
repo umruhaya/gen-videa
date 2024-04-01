@@ -128,9 +128,9 @@ class PublicFileInfo(FileInfo):
     responses={401: {"description": "Unauthorized"}}, 
     description="List all the public uploads by the users."
 )
-async def list_user_uploads(db: db_dependency, user: user_dependency, uploaded_only: bool = True) -> List[PublicFileInfo]:
+async def list_public_uploads(db: db_dependency, user: user_dependency, uploaded_only: bool = True) -> List[PublicFileInfo]:
     db_files = db.query(File, User).join(User, File.user_email == User.email).filter(
-        File.user_email == user["email"],
+        File.source == FileSource.system_generated,
         File.is_uploaded == (True if uploaded_only else File.is_uploaded),
         File.is_public == True
     ).all()
