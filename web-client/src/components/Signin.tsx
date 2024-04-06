@@ -130,7 +130,7 @@ export default function SignInComponent() {
                             )}
                         />
 
-                        <Button className="mt-4" type="submit">Submit</Button>
+                        <Button data-testid="signin-btn" className="mt-4" type="submit">Submit</Button>
                     </form>
                 </Form>
                 <div>

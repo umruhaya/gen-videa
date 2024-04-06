@@ -3,11 +3,12 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "dev": "astro dev --config astro.config.local.mjs --port 3000",
-    "proxy": "lcp --proxyUrl https://web.genvidea.com --port 8080 --proxyPartial /",
-    "start": "astro dev --port 3000",
-    "build": "astro check && astro build",
-    "preview": "astro preview"
+    "dev": "node checkNodeModules.cjs && astro dev --config astro.config.local.mjs --port 3000",
+    "proxy": "node checkNodeModules.cjs && lcp --proxyUrl https://web.genvidea.com --port 8080 --proxyPartial /",
+    "start": "node checkNodeModules.cjs && node dist/server/entry.mjs",
+    "build": "node checkNodeModules.cjs && astro build",
+    "check": "node checkNodeModules.cjs && astro check",
+    "preview": "node checkNodeModules.cjs && astro preview"
   },
   "dependencies": {
     "@astrojs/check": "^0.4.1",
