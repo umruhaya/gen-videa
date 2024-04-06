@@ -1,0 +1,62 @@
+name: E2E Tests
+
+on:
+  push:
+    branches:
+      - development
+      - staging
+      - production
+
+    paths:
+      - web-client/**
+      - e2e-tests/**
+
+  workflow_dispatch:
+
+jobs:
+  DockerImagePushAndDeploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Install dependencies for Web Client
+        run: npm install -g pnpm && pnpm install
+        working-directory: ./web-client
+
+      - name: Install dependencies for E2E Tests
+        run: pnpm install
+        working-directory: ./e2e-tests
+
+      - name: Install Playwright Browsers
+        run: pnpm exec playwright install --with-deps
+        working-directory: ./e2e-tests
+
+      - name: Run Web Client Server
+        run: |
+          pnpm proxy &
+          echo "PROXY_PID=$!" >> $GITHUB_ENV;
+          pnpm dev &
+          echo "DEV_PID=$!" >> $GITHUB_ENV;
+        working-directory: ./web-client
+
+      - name: Run Playwright tests
+        run: pnpm exec playwright test
+        working-directory: ./e2e-tests
+
+      - name: Clean up
+        run: |
+          kill $PROXY_PID || echo "Could not kill PROXY process";
+          kill $DEV_PID || echo "Could not kill DEV process";
+        
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
+          working-directory: ./e2e-tests
