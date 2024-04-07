@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
-from app.services.storage_service import generate_put_presigned_url, generate_get_presigned_url
+from app.services.storage_service import generate_put_presigned_url, generate_get_presigned_url, delete_storage_blob
 from app.settings import settings as env
 from app.models.storage import File, FileSource
 from app.models.user import User
@@ -10,6 +10,7 @@ from typing import List
 import mimetypes
 import uuid
 import os
+from sqlalchemy.orm import Session
 
 router = APIRouter(prefix='/files', tags=['files'])
 
@@ -191,3 +192,29 @@ async def upload_visibility(db: db_dependency, user: user_dependency, file_reque
     
     # Return a success response
     return Response(status_code=status.HTTP_200_OK, content="Visibility updated.", media_type="text/plain")
+
+
+@router.delete("/delete-file", responses={401: unauthorized_response, 404: not_found_response})
+async def delete_file_from_storage(db: db_dependency, user: user_dependency, file_id: str):
+    # Attempt to fetch the file with the given ID and user's email
+    file = db.query(File).filter(File.uuid == file_id, File.user_email == user["email"]).first()
+    
+    # Check if the file exists
+    if not file:
+        # If the file does not exist, return a 404 Not Found response
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="File not found.")
+    
+    # If the file exists, delete it
+    db.delete(file)
+
+    # Delete the file from the storage
+    delete_storage_blob(file.bucket, file.name)
+
+    db.commit()
+    
+    # Return a success response
+    return Response(status_code=status.HTTP_200_OK, content="File deleted.", media_type="text/plain")
+
+
+
+

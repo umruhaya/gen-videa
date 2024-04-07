@@ -45,3 +45,11 @@ def generate_get_presigned_url(bucket_name, blob_name, expiration: timedelta = t
         method="GET",
     )
     return url
+
+
+def delete_storage_blob(bucket_name, blob_name):
+    storage_client = storage.Client()
+    bucket = storage_client.get_bucket(bucket_name)
+    blob = bucket.blob(blob_name)
+    blob.delete()
+    return True

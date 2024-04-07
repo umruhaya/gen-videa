@@ -1,4 +1,3 @@
-
 // ==========================================================================
 
 import React, { useState } from 'react';
@@ -80,6 +79,13 @@ export default function MediaGrid() {
             <circle cx="10" cy="10" r="10" />
         </svg>
     );
+
+    const DeleteIcon = ({ className, onClick } : {className: string, onClick : any}) => (
+        <svg onClick={onClick} className={`h-6 w-6 text-red-500 cursor-pointer ${className}`} fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M8.707 10l-3-3-1.414 1.414L7.293 11.5l-3 3 1.414 1.414 3-3 3 3 1.414-1.414-3-3 3-3-1.414-1.414-3 3z" clipRule="evenodd" />
+        </svg>
+    );
+    
     
 
     const { data: systemGenerationsData, refetch: refetchGenerations } = useQuery<UserMedia[]>({ queryKey: ["systemMedia"], queryFn: systemGensQueryFn }, queryClient);
@@ -87,7 +93,11 @@ export default function MediaGrid() {
 
     const systemGenerations = systemGenerationsData ? systemGenerationsData.map(item => ({
         title: item.name,
-        header: <img src={item.url} alt={item.name} className="w-full h-full object-cover rounded-xl" />,
+        header: 
+        (<div className='relative'>
+            <img src={item.url} alt={item.name} className="w-full h-full object-cover rounded-xl" />
+            <DeleteIcon className="absolute top-0 left-0 m-1" onClick={() => handleDelete(item.uuid)} />
+        </div>),
         icon: icons[Math.floor(Math.random() * icons.length)]
     })) : items;
 
@@ -96,6 +106,7 @@ export default function MediaGrid() {
         header: (
             <div className="relative" onClick={() => handlePrivacyDialogOpen(item)}>
                 <img src={item.url} alt={item.name} className="w-full h-full object-cover rounded-xl" />
+                <DeleteIcon className="absolute top-0 left-0 m-1" onClick={() => handleDelete(item.uuid)} />
                 {item.is_public ? (
                     <GreenCircleIcon className="absolute top-0 right-0 m-1" />
                 ) : (
@@ -141,6 +152,38 @@ export default function MediaGrid() {
             console.error('Error updating file visibility:', error);
         }
     };
+
+    const handleDelete = async (fileId : any) => {
+        if (confirm('Are you sure you want to delete this item?')) {
+          try {
+            const response = await fetch(`/api/files/${fileId}`, {
+              method: 'DELETE',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            });
+      
+            if (response.status === 204) 
+            {
+              console.log(`File deleted, response status: ${response.status}`);
+
+              await refetchUploads();
+              await refetchGenerations();
+            } 
+            else 
+            {
+              const errorResponse = await response.text();
+              console.error('Failed to delete file:', errorResponse);
+              throw new Error(`Failed to delete file: ${errorResponse}`);
+            }
+          } catch (error) {
+            console.error('Error deleting file:', error);
+          }
+        }
+      };
+      
+    
+    
     
 
     return (
