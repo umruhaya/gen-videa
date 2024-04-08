@@ -21,6 +21,15 @@ export default function HeroHeader() {
                         Get Started
                     </Button>
                 </a>
+                <a href="/signin">
+                    <Button
+                        borderRadius="1.75rem"
+                        className="bg-white dark:bg-slate-900 text-black dark:text-white border-neutral-200 dark:border-slate-800"
+                        
+                    >
+                        Login
+                    </Button>
+                </a>
             </div>
         </div>
     );
