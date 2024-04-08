@@ -68,56 +68,61 @@ export default function MediaGrid() {
     const [privacyDialogOpen, setPrivacyDialogOpen] = useState(false);
     const [selectedFile, setSelectedFile] = useState<UserMedia | null>(null);
 
-    const RedCircleIcon = ({ className }: { className: string }) => (
-        <svg className={`h-6 w-6 text-red-500 ${className}`} fill="currentColor" viewBox="0 0 20 20">
-            <circle cx="10" cy="10" r="10" />
+    const GreenCircleIcon = ({ className, onClick }: { className: string; onClick: () => void }) => (
+        <svg onClick={onClick} className={`h-6 w-6 text-green-500 cursor-pointer ${className}`} fill="currentColor" viewBox="0 0 20 20">
+          <circle cx="10" cy="10" r="10" />
         </svg>
-    );
-    
-    const GreenCircleIcon = ({ className }: { className: string }) => (
-        <svg className={`h-6 w-6 text-green-500 ${className}`} fill="currentColor" viewBox="0 0 20 20">
-            <circle cx="10" cy="10" r="10" />
+      );
+      
+      const RedCircleIcon = ({ className, onClick }: { className: string; onClick: () => void }) => (
+        <svg onClick={onClick} className={`h-6 w-6 text-red-500 cursor-pointer ${className}`} fill="currentColor" viewBox="0 0 20 20">
+          <circle cx="10" cy="10" r="10" />
         </svg>
-    );
+      );
+      
 
-    const DeleteIcon = ({ className, onClick } : {className: string, onClick : any}) => (
+    const DeleteIcon = ({ className, onClick }: { className: string, onClick: any }) => (
         <svg onClick={onClick} className={`h-6 w-6 text-red-500 cursor-pointer ${className}`} fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M8.707 10l-3-3-1.414 1.414L7.293 11.5l-3 3 1.414 1.414 3-3 3 3 1.414-1.414-3-3 3-3-1.414-1.414-3 3z" clipRule="evenodd" />
         </svg>
     );
-    
-    
+
+
 
     const { data: systemGenerationsData, refetch: refetchGenerations } = useQuery<UserMedia[]>({ queryKey: ["systemMedia"], queryFn: systemGensQueryFn }, queryClient);
     const { data: userUploadsData, refetch: refetchUploads } = useQuery<UserMedia[]>({ queryKey: ["userMedia"], queryFn: userUploadsQueryFn }, queryClient);
 
     const systemGenerations = systemGenerationsData ? systemGenerationsData.map(item => ({
         title: item.name,
-        header: 
-        (<div className='relative'>
-            <img src={item.url} alt={item.name} className="w-full h-full object-cover rounded-xl" />
-            <DeleteIcon className="absolute top-0 left-0 m-1" onClick={() => handleDelete(item.uuid)} />
-        </div>),
+        header:
+            (<div className='relative'>
+                <img src={item.url} alt={item.name} className="w-full h-full object-cover rounded-xl" />
+                <DeleteIcon className="absolute top-0 left-0 m-1" onClick={() => handleDelete(item.uuid)} />
+            </div>),
         icon: icons[Math.floor(Math.random() * icons.length)]
     })) : items;
+
+    type IntrinsicAttributes = {
+        onClick?: () => void;
+    };
 
     const userUploads = userUploadsData ? userUploadsData.map((item, i) => ({
         title: item.name,
         header: (
-            <div className="relative" onClick={() => handlePrivacyDialogOpen(item)}>
+            <div className="relative">
                 <img src={item.url} alt={item.name} className="w-full h-full object-cover rounded-xl" />
-                <DeleteIcon className="absolute top-0 left-0 m-1" onClick={() => handleDelete(item.uuid)} />
+                <DeleteIcon className="absolute top-0 left-0 m-1" onClick={(e:any) => { e.stopPropagation(); handleDelete(item.uuid); }} />
                 {item.is_public ? (
-                    <GreenCircleIcon className="absolute top-0 right-0 m-1" />
+                    <GreenCircleIcon className="absolute top-0 right-0 m-1" onClick={() => handlePrivacyDialogOpen(item)} />
                 ) : (
-                    <RedCircleIcon className="absolute top-0 right-0 m-1" />
+                    <RedCircleIcon className="absolute top-0 right-0 m-1" onClick={() => handlePrivacyDialogOpen(item)} />
                 )}
             </div>
         ),
         icon: icons[Math.floor(Math.random() * icons.length)]
     })) : [];
-    
-    
+
+
 
     const handlePrivacyDialogOpen = (file: UserMedia) => {
         setSelectedFile(file);
@@ -140,7 +145,7 @@ export default function MediaGrid() {
                     is_public: isPublic
                 })
             });
-    
+
             if (!response.ok) {
                 const errorResponse = await response.text(); // or response.json() if the server sends JSON
                 console.error('Failed to update file visibility:', errorResponse);
@@ -153,38 +158,37 @@ export default function MediaGrid() {
         }
     };
 
-    const handleDelete = async (fileId : any) => {
+    const handleDelete = async (fileId: any) => {
         if (confirm('Are you sure you want to delete this item?')) {
-          try {
-            const response = await fetch(`/api/files/${fileId}`, {
-              method: 'DELETE',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-            });
-      
-            if (response.status === 204) 
-            {
-              console.log(`File deleted, response status: ${response.status}`);
+            try {
+                const queryParams = new URLSearchParams({ file_id: fileId });
+                const response = await fetch(`/api/files/delete-file?${queryParams}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
 
-              await refetchUploads();
-              await refetchGenerations();
-            } 
-            else 
-            {
-              const errorResponse = await response.text();
-              console.error('Failed to delete file:', errorResponse);
-              throw new Error(`Failed to delete file: ${errorResponse}`);
+                if (response.status === 200) {
+                    console.log(`File deleted, response status: ${response.status}`);
+
+                    await refetchUploads();
+                    await refetchGenerations();
+                }
+                else {
+                    const errorResponse = await response.text();
+                    console.error('Failed to delete file:', errorResponse);
+                    throw new Error(`Failed to delete file: ${errorResponse}`);
+                }
+            } catch (error) {
+                console.error('Error deleting file:', error);
             }
-          } catch (error) {
-            console.error('Error deleting file:', error);
-          }
         }
-      };
-      
-    
-    
-    
+    };
+
+
+
+
 
     return (
         <div>
