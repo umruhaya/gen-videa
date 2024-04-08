@@ -1,4 +1,5 @@
 import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
+import { Button } from "@/components/ui/button";
 import {
   IconArrowWaveRightUp,
   IconBoxAlignRightFilled,
@@ -48,7 +49,14 @@ export default function PublicMediaGrid() {
   return (
     <div>
       <section>
-        <h2 className="text-2xl font-bold my-4">Public Uploads</h2>
+        <section className="flex justify-between items-center">
+          <h2 className="text-2xl font-bold my-4">Public Uploads</h2>
+          <a href="/profile">
+            <Button variant="secondary" size="sm">
+            Back to Profile
+            </Button>
+          </a>
+        </section>
         <BentoGrid className="max-w-4xl mx-auto">
           {publicUploadsData?.map((item, i) => (
             <BentoGridItem
