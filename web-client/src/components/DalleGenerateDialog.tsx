@@ -41,7 +41,8 @@ export default function DalleGenerateDialog({ invalidate }: DalleGenerateProps) 
                 prompt: $dalle.prompt,
             }),
         })
-
+        isDalleGenerateDialogOpen.set(false) // Added this so that the dialogue closes once generation is done/fails.
+        //  While generation is happening, we see "Generating Image..."
         if (response.ok) {
             const data = await response.json()
             console.debug(data)
@@ -79,6 +80,9 @@ export default function DalleGenerateDialog({ invalidate }: DalleGenerateProps) 
                         Unleash the power of DALL·E to generate images from text prompts.
                     </DialogDescription>
                 </DialogHeader>
+                {$dalle.state === "generating" && (
+                    <div>Generating image...</div>
+                )}
                 <Label htmlFor="prompt">Prompt</Label>
                 <Input id="prompt" value={$dalle.prompt} onChange={(e) => dalleGenerate.set({ ...$dalle, prompt: e.target.value })} />
                 <DialogFooter>
