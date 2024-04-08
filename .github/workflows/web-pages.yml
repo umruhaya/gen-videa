@@ -16,7 +16,7 @@ jobs:
   DockerImagePushAndDeploy:
     runs-on: ubuntu-latest
     env: # Define environment variables for the entire job
-      IMAGE_NAME: web-server
+      IMAGE_NAME: web-client
       IMAGE_TAG: ${{ github.sha }}
       GCP_PROJECT_ID: jetrr-vision
       GCR_HOSTNAME: us-central1-docker.pkg.dev
