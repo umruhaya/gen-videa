@@ -1,0 +1,22 @@
+
+.custom-search-input {
+    background-color: var(--search-input-border);
+    border: 1px solid var(--search-input-border);
+    padding: 4px 8px;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+  
+  .custom-search-input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  }
+  
+  @media (max-width: 600px) {
+    .custom-search-input {
+      width: 100%;
+      padding: 6px 10px;
+    }
+  }
+  
