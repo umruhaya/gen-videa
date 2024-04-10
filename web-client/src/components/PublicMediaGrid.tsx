@@ -1,6 +1,6 @@
 import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
 import { Button } from "@/components/ui/button";
-import '../styles/searchbar.css';
+import { Input } from "@/components/ui/input";
 import { IconSearch } from "@tabler/icons-react";
 
 import {
@@ -55,7 +55,7 @@ export default function PublicMediaGrid() {
 
   useEffect(() => {
     if (publicUploadsData) {
-      const filteredData = publicUploadsData.filter(item => 
+      const filteredData = publicUploadsData.filter(item =>
         item.name.toLowerCase().includes(searchTerm.toLowerCase())
       );
       setFilteredUploads(filteredData);
@@ -66,43 +66,15 @@ export default function PublicMediaGrid() {
     return <div>Error loading public uploads.</div>;
   }
 
-  if (filteredUploads.length === 0 && searchTerm) {
-    return (
-      <div>
-        <section className="flex justify-between items-center">
-          <div className="flex border border-gray-200 rounded">
-            <IconSearch className="m-2 text-neutral-500" />
-            <input
-              type="text"
-              placeholder="Search captions..."
-              className="custom-search-input input input-bordered input-sm w-full max-w-xs"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-          <a href="/profile">
-            <Button variant="secondary" size="sm">
-              Back to Profile
-            </Button>
-          </a>
-        </section>
-        <div className="text-center py-10">
-          <p>No results found for "{searchTerm}".</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div>
-      <section>
-        <section className="flex justify-between items-center">
+        <section className="flex justify-between items-center mb-8">
           <div className="flex border border-gray-200 rounded">
             <IconSearch className="m-2 text-neutral-500" />
-            <input
+            <Input
               type="text"
               placeholder="Search captions..."
-              className="custom-search-input input input-bordered input-sm w-full max-w-xs"
+              className="input input-bordered input-sm w-full max-w-xs"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -113,18 +85,23 @@ export default function PublicMediaGrid() {
             </Button>
           </a>
         </section>
-        <BentoGrid className="max-w-4xl mx-auto">
-          {filteredUploads.map((item: PublicMedia, i: number) => (
-            <BentoGridItem
-              key={item.uuid}
-              title={item.name}
-              header={<img src={item.url} alt={item.name} className="w-full h-full object-cover rounded-xl" />}
-              icon={icons[Math.floor(Math.random() * icons.length)]}
-              description={"Uploaded by " + item.username}
-            />
-          ))}
-        </BentoGrid>
-      </section>
+        {(filteredUploads.length === 0 && searchTerm) ? (
+          <div className="text-center py-10">
+            <p>No public uploads found.</p>
+          </div>
+        ) : (
+          <BentoGrid className="max-w-4xl mx-auto">
+            {filteredUploads.map((item: PublicMedia, i: number) => (
+              <BentoGridItem
+                key={item.uuid}
+                title={item.name}
+                header={<img src={item.url} alt={item.name} className="w-full h-full object-cover rounded-xl" />}
+                icon={icons[i % icons.length]}
+                description={"Uploaded by " + item.username}
+              />
+            ))}
+          </BentoGrid>
+        )}
     </div>
   );
 }
