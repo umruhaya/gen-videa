@@ -1,3 +1,4 @@
+// Import statements for necessary libraries, hooks, components, and type definitions
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useEffect } from "react"
 import { useForm, type FieldErrors } from "react-hook-form"
@@ -18,17 +19,17 @@ import { ToastAction } from "@/components/ui/toast"
 import { useToast } from "@/components/ui/use-toast"
 import { Toaster } from "./ui/toaster"
 
-
+// Define a Zod schema for form validation
 const formSchema = z.object({
-    email: z.string().email(),
+    email: z.string().email(), // Email must be a valid email string
     password: z.string().min(8, {
-        message: "Password must be at least 8 characters.",
+        message: "Password must be at least 8 characters.", // Password must be at least 8 characters long
     }),
 })
 
 
 export default function SignInComponent() {
-
+    // Initialize toast notifications
     const { toast } = useToast()
 
 
@@ -41,6 +42,7 @@ export default function SignInComponent() {
         },
     })
 
+    // Display a toast notification for successful signup redirection
     useEffect(() => {
         const searchParams = new URLSearchParams(window.location.search)
         const signupSuccess = searchParams.get("signup") === "success"
@@ -60,6 +62,7 @@ export default function SignInComponent() {
 
         e?.preventDefault()
 
+        // Submit form data to the authentication API endpoint
         const formData = new FormData()
         formData.append("email", values.email)
         formData.append("password", values.password)
@@ -70,6 +73,7 @@ export default function SignInComponent() {
 
         const data = await response.json()
 
+        // Handle response status for success, unauthorized, or other errors
         switch (response.status) {
             case 200:
                 window.location.reload()
@@ -86,6 +90,7 @@ export default function SignInComponent() {
         }
     }
 
+    // Handle form submission with invalid data
     function onInvalidSubmit(errors: FieldErrors<z.infer<typeof formSchema>>) {
         form.setError("root", {
             type: "manual",
@@ -93,6 +98,7 @@ export default function SignInComponent() {
         })
     }
 
+    // Render the sign-in form UI
     return (
         <>
 
