@@ -1,38 +1,51 @@
 ---
 import "@/globals.css"
+
+// Defining the Props interface with a single 'title' property
 interface Props {
 	title: string;
 }
 
+// Destructuring 'title' from Astro.props to use as the document title
 const { title } = Astro.props;
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
+		<!-- Standard meta tags for character set, description, and viewport settings -->
 		<meta charset="UTF-8" />
 		<meta name="description" content="Astro description" />
 		<meta name="viewport" content="width=device-width" />
+		<!-- Link to the favicon -->
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<!-- Using Astro's built-in generator meta tag for SEO -->
 		<meta name="generator" content={Astro.generator} />
+		<!-- Dynamic document title, based on the 'title' prop -->
 		<title>{title}</title>
 	</head>
 	<body>
+		<!-- Slot for Astro component content -->
 		<slot />
 	</body>
 </html>
 <style is:global>
 </style>
+<!-- Inline script for theme preference detection and persistence -->
 <script is:inline>
 	const getThemePreference = () => {
+		// Function to determine the user's theme preference either from localStorage or the system preference
 		if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
 			return localStorage.getItem('theme');
 		}
 		return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 	};
+	// Applying the determined theme preference to the document element
 	const isDark = getThemePreference() === 'dark';
 	document.documentElement.classList[isDark ? 'add' : 'remove']('dark');
  
+	// If localStorage is available, observe changes to the 'dark' class on the document element
+	// and update localStorage with the current theme preference
 	if (typeof localStorage !== 'undefined') {
 		const observer = new MutationObserver(() => {
 			const isDark = document.documentElement.classList.contains('dark');
