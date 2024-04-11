@@ -10,7 +10,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import { isFileUploadDialogOpen, fileUpload } from '@/store';
+import { $isFileUploadDialogOpen, $fileUpload } from '@/store';
 import { ToastAction } from "@/components/ui/toast"
 import { useToast } from "@/components/ui/use-toast"
 import { Toaster } from "./ui/toaster"
@@ -26,23 +26,23 @@ type FileUploadDialogProps = {
 export default function FileUploadDialog({ invalidate }: FileUploadDialogProps) {
 
     // Local state hooks for managing dialog visibility and file upload status.
-    const $isOpen = useStore(isFileUploadDialogOpen)
-    const $fileUpload = useStore(fileUpload)
+    const isOpen = useStore($isFileUploadDialogOpen)
+    const fileUpload = useStore($fileUpload)
     const { toast } = useToast()
 
     // Handles the file upload process, including making a request for an upload URL,
     // uploading the file, and providing user feedback via toast notifications.
     const handleFileUpload = async () => {
         // Prevents file upload if no file is selected or if a file is already uploading.
-        if (!$fileUpload) return
-        if ($fileUpload.state === "uploading") return
+        if (!fileUpload) return
+        if (fileUpload.state === "uploading") return
 
         // Sets the file upload state to 'uploading' and notifies the user.
-        fileUpload.set({ ...$fileUpload, state: "uploading" })
+        $fileUpload.set({ ...fileUpload, state: "uploading" })
 
         toast({
             title: "File upload started.",
-            description: `Your file "${$fileUpload.file.name}" has started uploading.`,
+            description: `Your file "${fileUpload.file.name}" has started uploading.`,
             action: (
                 <ToastAction altText="Ack">Ok</ToastAction>
             )
@@ -54,8 +54,8 @@ export default function FileUploadDialog({ invalidate }: FileUploadDialogProps) 
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                human_name: $fileUpload.file.name,
-                extension: "." + ($fileUpload.file.name.split(".").pop() ?? "bin"),
+                human_name: fileUpload.file.name,
+                extension: "." + (fileUpload.file.name.split(".").pop() ?? "bin"),
             }),
         })
         const url = (await response.json())["url"] as string
@@ -69,13 +69,13 @@ export default function FileUploadDialog({ invalidate }: FileUploadDialogProps) 
         xhr.upload.addEventListener('progress', (e) => {
             if (e.lengthComputable) {
                 const percentComplete = (e.loaded / e.total) * 100;
-                fileUpload.set({ ...$fileUpload, progress: percentComplete });
+                $fileUpload.set({ ...fileUpload, progress: percentComplete });
             }
         });
 
         xhr.onload = () => {
             // Updates the state based on the response status and provides user feedback.
-            fileUpload.set({ ...$fileUpload, state: xhr.status === 200 ? "done" : "error" })
+            $fileUpload.set({ ...fileUpload, state: xhr.status === 200 ? "done" : "error" })
             if (xhr.status === 200) {
                 toast({
                     title: "File uploaded.",
@@ -84,8 +84,8 @@ export default function FileUploadDialog({ invalidate }: FileUploadDialogProps) 
                         <ToastAction altText="Ack">Ok</ToastAction>
                     )
                 })
-                fileUpload.set(null)
-                isFileUploadDialogOpen.set(false)
+                $fileUpload.set(null)
+                $isFileUploadDialogOpen.set(false)
                 invalidate()
             } else {
                 toast({
@@ -104,15 +104,15 @@ export default function FileUploadDialog({ invalidate }: FileUploadDialogProps) 
         }
 
         xhr.open('PUT', url, true);
-        xhr.setRequestHeader('Content-Type', $fileUpload.file.type);
-        xhr.send($fileUpload.file); // Starts the file upload.
+        xhr.setRequestHeader('Content-Type', fileUpload.file.type);
+        xhr.send(fileUpload.file); // Starts the file upload.
     };
 
     // The component renders a dialog with file input, file upload progress, and upload control.
     // Provides feedback and previews for the selected file.
     // https://www.radix-ui.com/primitives/docs/components/dialog#api-reference
     return (
-        <Dialog open={$isOpen} onOpenChange={(open) => isFileUploadDialogOpen.set(open)}>
+        <Dialog open={isOpen} onOpenChange={(open) => $isFileUploadDialogOpen.set(open)}>
             <DialogTrigger>
                 <Button>Upload</Button>
             </DialogTrigger>
@@ -125,12 +125,12 @@ export default function FileUploadDialog({ invalidate }: FileUploadDialogProps) 
                 </DialogHeader>
                 <input type="file" onChange={e => {
                     // file should not be accepted if there is already a file being uploaded
-                    if ($fileUpload && $fileUpload?.state === "uploading") return
+                    if (fileUpload && fileUpload?.state === "uploading") return
 
                     const file = e.target.files?.[0]
                     if (file) {
                         const previewUrl = URL.createObjectURL(file)
-                        fileUpload.set({
+                        $fileUpload.set({
                             file,
                             progress: 0,
                             state: 'idle',
@@ -140,16 +140,15 @@ export default function FileUploadDialog({ invalidate }: FileUploadDialogProps) 
                     }
                 }} />
 
-                {$fileUpload && (
+                {fileUpload && (
                     <img
-                        src={$fileUpload.previewUrl}
+                        src={fileUpload.previewUrl}
                         alt="Preview"
                         className="square-aspect w-48 h-auto"
                     />
                 )}
-                // Conditional rendering for file preview and upload progress.
-                {$fileUpload && (
-                    <Progress value={$fileUpload.progress} className="w-[60%]" />
+                {fileUpload && (
+                    <Progress value={fileUpload.progress} className="w-[60%]" />
                 )}
                 <DialogFooter>
                     <Button onClick={handleFileUpload}>Upload</Button>

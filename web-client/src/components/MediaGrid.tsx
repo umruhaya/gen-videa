@@ -1,12 +1,10 @@
-// ==========================================================================
-
-import React, { useState } from 'react';
 import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
-import { useQuery, QueryClient } from "@tanstack/react-query"
+import { useQuery } from "@tanstack/react-query"
 import FileUploadDialog from "@/components/FileUploadDialog";
-import DalleGenerateDialog from "./DalleGenerateDialog";
-import PrivacyDialog from "./PrivacyDialog"; // Import PrivacyDialog component
-
+import MediaViewDialog from '@/components/MediaDialog';
+import DalleGenerateDialog from "@/components/DalleGenerateDialog";
+import { $mediaDialog } from '@/store';
+import { queryClient } from '@/store/query-client';
 
 import {
     IconArrowWaveRightUp,
@@ -17,23 +15,7 @@ import {
     IconSignature,
     IconTableColumn,
 } from "@tabler/icons-react";
-
-
-const userUploadsQueryFn = async () => {
-    const response = await fetch("/api/files/list-user-uploads")
-    if (response.ok) {
-        return response.json()
-    }
-    throw new Error("Failed to fetch user data.")
-}
-
-const systemGensQueryFn = async () => {
-    const response = await fetch("/api/files/list-system-generations")
-    if (response.ok) {
-        return response.json()
-    }
-    throw new Error("Failed to fetch user data")
-}
+import axios from 'axios';
 
 type UserMedia = {
     uuid: string
@@ -45,12 +27,6 @@ type UserMedia = {
     is_processed: boolean
     is_public: boolean;
 }
-type PrivacyDialogProps = {
-    isOpen: boolean;
-    onClose: () => void;
-    file?: UserMedia; // Make 'file' prop optional
-    onVisibilityChange: (fileId: string, isPublic: boolean) => void;
-};
 
 const icons = [
     <IconClipboardCopy className="h-4 w-4 text-neutral-500" />,
@@ -62,133 +38,33 @@ const icons = [
     <IconBoxAlignRightFilled className="h-4 w-4 text-neutral-500" />,
 ]
 
-const queryClient = new QueryClient()
+function MediaComponent({ url, type }: { url: string, type: string }) {
+    return type.includes("video") ? (
+        <video controls src={url} className="w-full h-full object-cover rounded-xl" />
+    ) : (
+        <img src={url} className="w-full h-full object-cover rounded-xl" />
+    );
+}
 
 export default function MediaGrid() {
-    const [privacyDialogOpen, setPrivacyDialogOpen] = useState(false);
-    const [selectedFile, setSelectedFile] = useState<UserMedia | null>(null);
+    const { data: systemGenerationsData, refetch: refetchGenerations } = useQuery<UserMedia[]>({
+        queryKey: ["systemMedia"],
+        queryFn: () => axios.get("/api/files/list-system-generations").then(res => res.data),
+    }, queryClient);
+    const { data: userUploadsData, refetch: refetchUploads } = useQuery<UserMedia[]>({
+        queryKey: ["userMedia"],
+        queryFn: () => axios.get("/api/files/list-user-uploads").then(res => res.data),
+    }, queryClient);
 
-    const GreenCircleIcon = ({ className, onClick }: { className: string; onClick: () => void }) => (
-        <svg onClick={onClick} className={`h-6 w-6 text-green-500 cursor-pointer ${className}`} fill="currentColor" viewBox="0 0 20 20">
-          <circle cx="10" cy="10" r="10" />
-        </svg>
-      );
-      
-      const RedCircleIcon = ({ className, onClick }: { className: string; onClick: () => void }) => (
-        <svg onClick={onClick} className={`h-6 w-6 text-red-500 cursor-pointer ${className}`} fill="currentColor" viewBox="0 0 20 20">
-          <circle cx="10" cy="10" r="10" />
-        </svg>
-      );
-      
+    const systemGenerations = systemGenerationsData?.map((item, i) => ({
+        ...item,
+        header: <MediaComponent url={item.url} type={item.content_type} />,
+    }));
 
-    const DeleteIcon = ({ className, onClick }: { className: string, onClick: any }) => (
-        <svg onClick={onClick} className={`h-6 w-6 text-red-500 cursor-pointer ${className}`} fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M8.707 10l-3-3-1.414 1.414L7.293 11.5l-3 3 1.414 1.414 3-3 3 3 1.414-1.414-3-3 3-3-1.414-1.414-3 3z" clipRule="evenodd" />
-        </svg>
-    );
-
-
-
-    const { data: systemGenerationsData, refetch: refetchGenerations } = useQuery<UserMedia[]>({ queryKey: ["systemMedia"], queryFn: systemGensQueryFn }, queryClient);
-    const { data: userUploadsData, refetch: refetchUploads } = useQuery<UserMedia[]>({ queryKey: ["userMedia"], queryFn: userUploadsQueryFn }, queryClient);
-
-    const systemGenerations = systemGenerationsData ? systemGenerationsData.map(item => ({
-        title: item.name,
-        header:
-            (<div className='relative'>
-                <img src={item.url} alt={item.name} className="w-full h-full object-cover rounded-xl" />
-                <DeleteIcon className="absolute top-0 left-0 m-1" onClick={() => handleDelete(item.uuid)} />
-            </div>),
-        icon: icons[Math.floor(Math.random() * icons.length)]
-    })) : items;
-
-    type IntrinsicAttributes = {
-        onClick?: () => void;
-    };
-
-    const userUploads = userUploadsData ? userUploadsData.map((item, i) => ({
-        title: item.name,
-        header: (
-            <div className="relative">
-                <img src={item.url} alt={item.name} className="w-full h-full object-cover rounded-xl" />
-                <DeleteIcon className="absolute top-0 left-0 m-1" onClick={(e:any) => { e.stopPropagation(); handleDelete(item.uuid); }} />
-                {item.is_public ? (
-                    <GreenCircleIcon className="absolute top-0 right-0 m-1" onClick={() => handlePrivacyDialogOpen(item)} />
-                ) : (
-                    <RedCircleIcon className="absolute top-0 right-0 m-1" onClick={() => handlePrivacyDialogOpen(item)} />
-                )}
-            </div>
-        ),
-        icon: icons[Math.floor(Math.random() * icons.length)]
-    })) : [];
-
-
-
-    const handlePrivacyDialogOpen = (file: UserMedia) => {
-        setSelectedFile(file);
-        setPrivacyDialogOpen(true);
-    };
-
-    const handlePrivacyDialogClose = () => {
-        setPrivacyDialogOpen(false);
-    };
-
-    const handleVisibilityChange = async (fileId: string, isPublic: boolean) => {
-        try {
-            const response = await fetch('/api/files/update-file-visibility', {
-                method: 'PATCH', // Change this from 'POST' to 'PATCH'
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    file_id: fileId,
-                    is_public: isPublic
-                })
-            });
-
-            if (!response.ok) {
-                const errorResponse = await response.text(); // or response.json() if the server sends JSON
-                console.error('Failed to update file visibility:', errorResponse);
-                throw new Error(`Failed to update file visibility: ${errorResponse}`);
-            }
-            console.log(`Visibility updated for file ${fileId}, response status: ${response.status}`);
-            await refetchUploads();
-        } catch (error) {
-            console.error('Error updating file visibility:', error);
-        }
-    };
-
-    const handleDelete = async (fileId: any) => {
-        if (confirm('Are you sure you want to delete this item?')) {
-            try {
-                const queryParams = new URLSearchParams({ file_id: fileId });
-                const response = await fetch(`/api/files/delete-file?${queryParams}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                });
-
-                if (response.status === 200) {
-                    console.log(`File deleted, response status: ${response.status}`);
-
-                    await refetchUploads();
-                    await refetchGenerations();
-                }
-                else {
-                    const errorResponse = await response.text();
-                    console.error('Failed to delete file:', errorResponse);
-                    throw new Error(`Failed to delete file: ${errorResponse}`);
-                }
-            } catch (error) {
-                console.error('Error deleting file:', error);
-            }
-        }
-    };
-
-
-
-
+    const userUploads = userUploadsData?.map((item, i) => ({
+        ...item,
+        header: <MediaComponent url={item.url} type={item.content_type} />,
+    }));
 
     return (
         <div>
@@ -200,10 +76,19 @@ export default function MediaGrid() {
                     </div>
                 </div>
                 <BentoGrid className="max-w-4xl mx-auto">
-                    {systemGenerations.map((item, i) => (
+                    {systemGenerations?.map((item, i) => (
                         <BentoGridItem
                             key={i}
-                            {...item}
+                            title={item.name}
+                            header={item.header}
+                            onClick={() => $mediaDialog.set({
+                                fileId: item.uuid,
+                                isPublic: item.is_public,
+                                title: item.name,
+                                url: item.url,
+                                isVideo: item.content_type.includes("video"),
+                                isPersonalView: true
+                            })}
                         />
                     ))}
                 </BentoGrid>
@@ -216,67 +101,27 @@ export default function MediaGrid() {
                     </div>
                 </div>
                 <BentoGrid className="max-w-4xl mx-auto">
-                    {userUploads.map((item, i) => (
+                    {userUploads?.map((item, i) => (
                         <BentoGridItem
                             key={i}
-                            title={item.title}
+                            title={item.name}
                             header={item.header}
-                            icon={item.icon}
+                            onClick={() => $mediaDialog.set({
+                                fileId: item.uuid,
+                                isPublic: item.is_public,
+                                title: item.name,
+                                url: item.url,
+                                isVideo: item.content_type.includes("video"),
+                                isPersonalView: true
+                            })}
                         />
                     ))}
                 </BentoGrid>
-
             </section>
-            {privacyDialogOpen && selectedFile && (
-                <PrivacyDialog
-                    isOpen={privacyDialogOpen}
-                    onClose={handlePrivacyDialogClose}
-                    file={selectedFile}
-                    onVisibilityChange={handleVisibilityChange}
-                />
-            )}
+            <MediaViewDialog inValidate={() => {
+                refetchGenerations();
+                refetchUploads();
+            }}/>
         </div>
     );
 }
-
-const Skeleton = () => (
-    <div className="flex flex-1 w-full square-aspect min-h-[6rem] rounded-xl bg-gradient-to-br from-neutral-200 dark:from-neutral-900 dark:to-neutral-800 to-neutral-100"></div>
-);
-
-const items = [
-    {
-        title: "The Dawn of Innovation",
-        header: <Skeleton />,
-        icon: <IconClipboardCopy className="h-4 w-4 text-neutral-500" />,
-    },
-    {
-        title: "The Digital Revolution",
-        header: <Skeleton />,
-        icon: <IconFileBroken className="h-4 w-4 text-neutral-500" />,
-    },
-    {
-        title: "The Art of Design",
-        header: <Skeleton />,
-        icon: <IconSignature className="h-4 w-4 text-neutral-500" />,
-    },
-    {
-        title: "The Power of Communication",
-        header: <Skeleton />,
-        icon: <IconTableColumn className="h-4 w-4 text-neutral-500" />,
-    },
-    {
-        title: "The Pursuit of Knowledge",
-        header: <Skeleton />,
-        icon: <IconArrowWaveRightUp className="h-4 w-4 text-neutral-500" />,
-    },
-    {
-        title: "The Joy of Creation",
-        header: <Skeleton />,
-        icon: <IconBoxAlignTopLeft className="h-4 w-4 text-neutral-500" />,
-    },
-    {
-        title: "The Spirit of Adventure",
-        header: <Skeleton />,
-        icon: <IconBoxAlignRightFilled className="h-4 w-4 text-neutral-500" />,
-    },
-];

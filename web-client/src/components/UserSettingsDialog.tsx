@@ -2,7 +2,7 @@ import { useStore } from '@nanostores/react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from "zod";
-import { isUserSettingsDialogOpen, userSettings } from '@/store';
+import { $isUserSettingsDialogOpen, $userSettings } from '@/store';
 import { useToast } from "@/components/ui/use-toast";
 import { ToastAction } from "@/components/ui/toast"
 import { Input } from '@/components/ui/input';
@@ -32,8 +32,8 @@ const formSchema = z.object({
 });
 
 export default function UserSettingsDialog({invalidate} : Props) {
-    const $isOpen = useStore(isUserSettingsDialogOpen);
-    const $settings = useStore(userSettings);
+    const isOpen = useStore($isUserSettingsDialogOpen);
+    const settings = useStore($userSettings);
     const { toast } = useToast();
 
     const {
@@ -53,8 +53,8 @@ export default function UserSettingsDialog({invalidate} : Props) {
             body: JSON.stringify(data),
         });
         if (response.ok) {
-            userSettings.set({ ...$settings, ...data });
-            isUserSettingsDialogOpen.set(false);
+            $userSettings.set({ ...settings, ...data });
+            $isUserSettingsDialogOpen.set(false);
             toast({
                 title: "Settings updated successfully.",
                 description: "Your username has been updated.",
@@ -64,7 +64,7 @@ export default function UserSettingsDialog({invalidate} : Props) {
             //retching the user settings after the update
             invalidate();
         } else {
-            userSettings.set({ ...$settings, state: "error" });
+            $userSettings.set({ ...settings, state: "error" });
             toast({
                 title: "Failed to update settings.",
                 description: "Your username could not be updated.",
@@ -85,7 +85,7 @@ export default function UserSettingsDialog({invalidate} : Props) {
 
     return (
         <>
-            <Dialog open={$isOpen} onOpenChange={(open : any) => isUserSettingsDialogOpen.set(open)}>
+            <Dialog open={isOpen} onOpenChange={(open : any) => $isUserSettingsDialogOpen.set(open)}>
             <DialogTrigger>
                 <Button>
                     <SettingsIcon size={24} />
@@ -99,7 +99,7 @@ export default function UserSettingsDialog({invalidate} : Props) {
                     </DialogDescription>
                 </DialogHeader>
                 <Label htmlFor="username">New Username</Label>
-                <Input id="username" {...register("username")} defaultValue={$settings.username} placeholder='FunkyRabbit' />
+                <Input id="username" {...register("username")} defaultValue={settings.username} placeholder='FunkyRabbit' />
                 <DialogFooter>
                     <Button type="submit" onClick={handleSubmit(onSubmit, onInvalidSubmit)}>Save</Button>
                 </DialogFooter>
