@@ -1,9 +1,11 @@
 ---
+//Layout with dynamic content based on authentication, featuring user profile and media gridLayout with dynamic content based on authentication, featuring user profile and media grid
 import Layout from "../layouts/Layout.astro";
 import MediaGrid from "@/components/MediaGrid.tsx";
 import UserProfileHeader from "@/components/UserProfileHeader.tsx";
 import Header from "../components/Header.tsx";
 
+// Dynamic content: disable prerendering and redirect if not authenticated
 export const prerender = false;
 if (Astro.cookies.has("access_token") === false) {
   return Astro.redirect("/");
