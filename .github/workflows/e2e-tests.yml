@@ -3,7 +3,7 @@ name: E2E Tests
 on:
   push:
     branches:
-      - development
+      # - development
       - staging
       - production
 
@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  DockerImagePushAndDeploy:
+  End2EndTests:
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
