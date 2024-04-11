@@ -17,15 +17,16 @@ class File(Base):
     __tablename__ = 'file'
 
     uuid = Column(String(length=64), primary_key=True)
-    bucket = Column(String(length=64))
-    name = Column(String(length=256))
+    bucket = Column(String(length=64), nullable=False)
+    name = Column(String(length=256), nullable=False)
+    caption = Column(Text, nullable=True)
     human_readable_name = Column(String(length=256), default='')
-    extension = Column(String(length=16))
-    is_public = Column(Boolean, default=False)
-    is_uploaded = Column(Boolean, default=False)
+    extension = Column(String(length=16), nullable=False)
+    is_public = Column(Boolean, default=False, nullable=False)
+    is_uploaded = Column(Boolean, default=False, nullable=False)
     user_email = Column(String(length=256), ForeignKey('auth_user.email'))
-    content_type = Column(SQLEnum(FileType))
-    source = Column(SQLEnum(FileSource))
+    content_type = Column(SQLEnum(FileType), nullable=False)
+    source = Column(SQLEnum(FileSource), nullable=False)
 
     # This will enable you to access the user directly from a File instance
     user = relationship("User", back_populates="files")

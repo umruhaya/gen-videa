@@ -6,9 +6,9 @@ class User(Base):
     __tablename__ = 'auth_user'
 
     email = Column(String(length=64), primary_key=True)
-    username = Column(String(length=64))
-    password = Column(String(length=128))
-    flag = Column(Boolean, default=False)
+    username = Column(String(length=64), unique=True)
+    password = Column(String(length=128), nullable=False)
+    profile_picture = Column(String(length=128), nullable=True)
 
     # relationship with File model
     files = relationship("File", back_populates="user", cascade="all, delete-orphan")
