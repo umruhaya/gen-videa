@@ -18,3 +18,17 @@ not_found_response = {
         "application/json": {"example": {"detail": "Item not found."}}
     }
 }
+
+media_type_not_supported = {
+    "description": "Error: Media Type Not Supported",
+    "content": {
+        "application/json": {"example": {"detail": "Media type not supported."}}
+    }
+}
+
+bad_request_response = {
+    "description": "Error: Bad Request",
+    "content": {
+        "application/json": {"example": {"detail": "Bad request."}}
+    }
+}

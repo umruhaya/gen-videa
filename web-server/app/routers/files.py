@@ -4,7 +4,7 @@ from app.settings import settings as env
 from app.models.storage import File, FileSource
 from app.models.user import User
 from app.dependencies import db_dependency, user_dependency
-from app.responses import unauthorized_response, not_found_response
+from app.responses import unauthorized_response, not_found_response, bad_request_response, media_type_not_supported
 from pydantic import BaseModel
 from typing import List
 import mimetypes
@@ -33,7 +33,7 @@ class FileUrlResponse(BaseModel):
     url: str
 
 @router.post("/create-file-upload-url", 
-    responses={400: {"description": "Bad Request"}}, 
+    responses={401: bad_request_response, 401: unauthorized_response, 415: media_type_not_supported}, 
     response_model=FileUrlResponse,
     description="Create a pre-signed URL for a file upload.\nAllowed file types: .jpg, .jpeg, .png, .gif, .mp4, .mov, .avi, .mkv",
 )
@@ -47,7 +47,7 @@ async def create_file_upload_url(db: db_dependency, user: user_dependency, file:
 
     if file_type is None:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
+            status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
             detail=f"File type {mime_type} not supported"
         )
 
@@ -79,7 +79,7 @@ class FileInfo(BaseModel):
     url: str
 
 @router.get("/list-user-uploads", 
-    responses={401: {"description": "Unauthorized"}}, 
+    responses={401: unauthorized_response}, 
     description="List all files uploaded by the user."
 )
 async def list_user_uploads(db: db_dependency, user: user_dependency, public_only: bool = False, uploaded_only: bool = True) -> List[FileInfo]:
@@ -101,7 +101,7 @@ async def list_user_uploads(db: db_dependency, user: user_dependency, public_onl
     return files
 
 @router.get("/list-system-generations", 
-    responses={401: {"description": "Unauthorized"}}, 
+    responses={401: unauthorized_response}, 
     description="List all generated files by the system/ai."
 )
 async def list_system_generations(db: db_dependency, user: user_dependency, public_only: bool = False) -> List[FileInfo]:
@@ -126,7 +126,7 @@ class PublicFileInfo(FileInfo):
     email: str
 
 @router.get("/list-public-uploads", 
-    responses={401: {"description": "Unauthorized"}}, 
+    responses={401: unauthorized_response}, 
     description="List all the public uploads by the users."
 )
 async def list_public_uploads(db: db_dependency, user: user_dependency, uploaded_only: bool = True) -> List[PublicFileInfo]:
@@ -147,26 +147,6 @@ async def list_public_uploads(db: db_dependency, user: user_dependency, uploaded
                 email=user.email,
             ) for file, user in db_files]
     return files
-
-
-@router.patch("/upload-visibility", responses={401: {"description": "Unauthorized"}, 404: {"description": "File not found"}})
-async def upload_visibility(db: db_dependency, user: user_dependency, file_id: str, is_public: bool) -> Response:
-    # Attempt to fetch the file with the given ID and user's email
-    file = db.query(File).filter(File.uuid == file_id, File.user_email == user["email"]).first()
-    
-    # Check if the file exists
-    if not file:
-        # If the file does not exist, return a 404 Not Found response
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="File not found.")
-    
-    # If the file exists, update its visibility
-    file.is_public = is_public
-    db.commit()
-    
-    # Return a success response
-    return Response(status_code=status.HTTP_200_OK, content="Visibility updated.", media_type="text/plain")
-
-
 
 class FileVisibilityUpdateRequest(BaseModel):
     file_id: str
@@ -214,7 +194,3 @@ async def delete_file_from_storage(db: db_dependency, user: user_dependency, fil
     
     # Return a success response
     return Response(status_code=status.HTTP_200_OK, content="File deleted.", media_type="text/plain")
-
-
-
-

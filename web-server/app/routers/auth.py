@@ -25,11 +25,16 @@ async def create_user(db: db_dependency, create_user_request: CreateUserRequest)
         return f"User {create_user_model.username} created successfully."
     except IntegrityError as e:
         db.rollback()  # It's important to roll back the session to a clean state
-        # Check if the error is due to a duplicate email
+        # Check if the error is due to a duplicate email or username
         if 'unique constraint' in str(e.orig).lower() and 'email' in str(e.orig).lower():
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
                 detail="Email already exists."
+            )
+        if 'unique constraint' in str(e.orig).lower() and 'username' in str(e.orig).lower():
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Username already exists."
             )
         else:
             # If the error is not due to a duplicate email, re-raise it
