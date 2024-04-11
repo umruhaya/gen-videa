@@ -15,20 +15,29 @@ import { ToastAction } from "@/components/ui/toast"
 import { useToast } from "@/components/ui/use-toast"
 import { Toaster } from "./ui/toaster"
 
+// Type definition for props passed to the FileUploadDialog component.
+// Includes a callback function to be called upon successful file upload.
 type FileUploadDialogProps = {
     invalidate: () => void
 }
 
+// The FileUploadDialog component manages file uploads through a dialog interface.
+// It provides feedback to the user via toast notifications and updates the global state accordingly.
 export default function FileUploadDialog({ invalidate }: FileUploadDialogProps) {
 
+    // Local state hooks for managing dialog visibility and file upload status.
     const $isOpen = useStore(isFileUploadDialogOpen)
     const $fileUpload = useStore(fileUpload)
     const { toast } = useToast()
 
+    // Handles the file upload process, including making a request for an upload URL,
+    // uploading the file, and providing user feedback via toast notifications.
     const handleFileUpload = async () => {
+        // Prevents file upload if no file is selected or if a file is already uploading.
         if (!$fileUpload) return
         if ($fileUpload.state === "uploading") return
 
+        // Sets the file upload state to 'uploading' and notifies the user.
         fileUpload.set({ ...$fileUpload, state: "uploading" })
 
         toast({
@@ -38,7 +47,7 @@ export default function FileUploadDialog({ invalidate }: FileUploadDialogProps) 
                 <ToastAction altText="Ack">Ok</ToastAction>
             )
         })
-
+        // Fetches an upload URL from the backend and uploads the file to that URL.
         const response = await fetch("/api/files/create-file-upload-url", {
             method: "POST",
             headers: {
@@ -53,6 +62,8 @@ export default function FileUploadDialog({ invalidate }: FileUploadDialogProps) 
 
         console.debug(url)
 
+        // Configures and sends the XMLHttpRequest for the file upload.
+        // Tracks upload progress and updates the state accordingly.
         const xhr = new XMLHttpRequest();
 
         xhr.upload.addEventListener('progress', (e) => {
@@ -63,6 +74,7 @@ export default function FileUploadDialog({ invalidate }: FileUploadDialogProps) 
         });
 
         xhr.onload = () => {
+            // Updates the state based on the response status and provides user feedback.
             fileUpload.set({ ...$fileUpload, state: xhr.status === 200 ? "done" : "error" })
             if (xhr.status === 200) {
                 toast({
@@ -87,14 +99,17 @@ export default function FileUploadDialog({ invalidate }: FileUploadDialogProps) 
         };
 
         xhr.onerror = (e) => {
+            // Error handling for network errors during file upload could be implemented here.
             // console.error(e.er)
         }
 
         xhr.open('PUT', url, true);
         xhr.setRequestHeader('Content-Type', $fileUpload.file.type);
-        xhr.send($fileUpload.file);
+        xhr.send($fileUpload.file); // Starts the file upload.
     };
 
+    // The component renders a dialog with file input, file upload progress, and upload control.
+    // Provides feedback and previews for the selected file.
     // https://www.radix-ui.com/primitives/docs/components/dialog#api-reference
     return (
         <Dialog open={$isOpen} onOpenChange={(open) => isFileUploadDialogOpen.set(open)}>
@@ -132,7 +147,7 @@ export default function FileUploadDialog({ invalidate }: FileUploadDialogProps) 
                         className="square-aspect w-48 h-auto"
                     />
                 )}
-
+                // Conditional rendering for file preview and upload progress.
                 {$fileUpload && (
                     <Progress value={$fileUpload.progress} className="w-[60%]" />
                 )}
