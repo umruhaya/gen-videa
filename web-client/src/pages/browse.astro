@@ -1,10 +1,14 @@
 ---
+//Checks for user authentication and conditionally renders or redirects based on the presence of an access token
 import Layout from "../layouts/Layout.astro";
 import PublicMediaGrid from "@/components/PublicMediaGrid.tsx";
 import UserProfileHeader from "@/components/UserProfileHeader.tsx";
 import Header from "../components/Header.tsx";
 
+// Disables prerendering for dynamic content based on user authentication status.
 export const prerender = false;
+
+// Redirects to the home page if no access token is found in cookies, indicating the user is not logged in
 if (Astro.cookies.has("access_token") === false) {
   return Astro.redirect("/");
 }
