@@ -1,3 +1,4 @@
+// Import necessary utilities for form handling and validation
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm, type FieldErrors } from "react-hook-form"
 import { z } from "zod"
@@ -14,12 +15,14 @@ import {
 import { Input } from "@/components/ui/input"
 import type { BaseSyntheticEvent } from "react"
 
+// Define the form's validation schema using Zod
 const formSchema = z.object({
-    username: z.string().min(3),
-    email: z.string().email(),
+    username: z.string().min(3), // Username must be at least 3 characters long
+    email: z.string().email(), // Email must be a valid email format
     password: z.string().min(8, {
-        message: "Password must be at least 8 characters.",
+        message: "Password must be at least 8 characters.", // Password validations for length, characters, and special characters
     })
+        // Additional password criteria validations for uppercase, lowercase, digit, and special characters
         .refine((val) => /[A-Z]/.test(val), {
             message: "Password must contain at least one uppercase letter.",
         })
@@ -34,7 +37,7 @@ const formSchema = z.object({
         }),
 })
 
-
+// SignUpComponent functional component definition
 export default function SignUpComponent() {
     // 1. Define your form.
     const form = useForm<z.infer<typeof formSchema>>({
@@ -53,6 +56,7 @@ export default function SignUpComponent() {
 
         e?.preventDefault()
 
+        // Submit the form data to the signup API endpoint
         const response = await fetch("/api/auth/signup", {
             method: "POST",
             headers: {
@@ -63,17 +67,18 @@ export default function SignUpComponent() {
 
         const data = await response.json()
 
+        // Handle different response statuses (e.g., success, email exists, validation errors)
         switch (response.status) {
-            case 201:
+            case 201: // On successful signup, redirect to the sign-in page with a success query parameter
                 window.location.href = "/signin?signup=success"
                 break
-            case 409:
+            case 409: // If the email already exists, set an error on the email field
                 form.setError("email", {
                     type: "manual",
                     message: "Email already exists.",
                 })
                 break
-            case 422:
+            case 422: // Handle other validation errors from the API
                 form.setError("password", {
                     type: "manual",
                     message: data.detail[0].msg,
@@ -82,18 +87,22 @@ export default function SignUpComponent() {
         }
     }
 
+    // Handler for submission attempts that fail validation
     function onInvalidSubmit(errors: FieldErrors<z.infer<typeof formSchema>>) {
+        // Set a generic error if submission fails due to validation issues
         form.setError("root", {
             type: "manual",
             message: "Invalid email or password.",
         })
     }
 
+    // Render the sign-up form with validation feedback for each field and password criteria
     return (
         <>
             <section className="w-screen h-screen grid place-items-center">
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onValidSubmit, onInvalidSubmit)} className="md:w-96 p-8 bg-secondary">
+                        {/* Form fields for username, email, and password with live password criteria feedback */}
 
                         <h1 className="text-bold text-4xl mb-8">
                             Sign Up
@@ -152,6 +161,7 @@ export default function SignUpComponent() {
                         <Button className="mt-4" type="submit">Submit</Button>
                     </form>
                 </Form>
+                {/* Link for users who already have an account to sign in */}
                 <div style={{ marginBottom: '60px' }}>
                     <style>{`
                 .signin-link {
