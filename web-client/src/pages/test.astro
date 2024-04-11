@@ -4,11 +4,12 @@ import Layout from '../layouts/Layout.astro';
 
 <Layout title="Genvidea">
 	<main class="bg-slate-700 p-4">
-		<button id="fetchDataBtn">Fetch Data</button>
-		<div id="dataContainer"></div>
+		<button id="fetchDataBtn">Fetch Data</button> <!-- Trigger for data fetching -->
+		<div id="dataContainer"></div> <!-- Container for displaying fetched data -->
 	</main>
 	<script>
 		// This script will run in the browser
+		// Handles data fetching from '/api' on button click and displays it
 		document.addEventListener('DOMContentLoaded', (event) => {
 			const fetchDataBtn = document.getElementById('fetchDataBtn');
 			const dataContainer = document.getElementById('dataContainer');
