@@ -1,27 +1,34 @@
+// Importing necessary components and hooks
 import { Button } from "@/components/ui/button";
 import { useQuery, QueryClient } from "@tanstack/react-query";
 import UserSettingsDialog from "./UserSettingsDialog";
 
+// Asynchronous function to fetch user settings data from the server
 const queryFn = async () => {
   const response = await fetch("/api/profile/user-settings");
   if (response.ok) {
-    return response.json();
+    return response.json(); // If the request is successful, return the JSON response
   }
-  throw new Error("Failed to fetch user data");
+  throw new Error("Failed to fetch user data"); // If the request fails, throw an error
 };
 
+// Type definition for the structure of user settings data
 type UserSettingsData = {
-  username: string;
+  username: string; // Expects a username of type string
 };
 
+// Instantiating a new QueryClient for react-query
 const queryClient = new QueryClient();
 
+// The UserProfileHeader functional component
 export default function UserProfileHeader() {
+  // Using the useQuery hook to fetch user settings data
   const { data, isLoading, refetch: refetchUserSettings } = useQuery<UserSettingsData>({
     queryKey: ["userSettings"],
     queryFn
   }, queryClient);
 
+  // Render the user profile header UI
   return (
     <section className="p-8">
       <h1 className="text-4xl font-bold mb-2">Profile</h1>
