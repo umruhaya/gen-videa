@@ -3,6 +3,7 @@ import Layout from "@/layouts/Layout.astro";
 import HeroParallax from "@/components/ui/hero-parallax.tsx";
 import Header from "@/components/Header";
 
+// Generating product data for the hero parallax component
 const names = [
     "aladdin.png",
     "beech-dancer.png",
@@ -24,10 +25,10 @@ const prods = names.map(name => ({
 }))
 ---
 
-<Layout title="Genvidea">
-    <Header isLoggedIn={false} client:load />
+<Layout title="Genvidea"> // Setting page title and wrapping content in the common layout
+    <Header isLoggedIn={false} client:load /> // Displaying the header with login state
 
     <main class="flex flex-col gap-8">
-        <HeroParallax client:load products={prods} />
+        <HeroParallax client:load products={prods} /> // Hero section with parallax effect
     </main>
 </Layout>
