@@ -3,7 +3,10 @@ import Layout from "@/layouts/Layout.astro";
 import DashboardComponent from "@/components/Dashboard.tsx";
 import Header from "@/components/Header";
 
+// Disable static generation for dynamic content based on user session
 export const prerender = false;
+
+// Redirect users without an access token to the home page
 if (Astro.cookies.has("access_token") === false) {
     return Astro.redirect("/");
 }
