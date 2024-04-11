@@ -1,5 +1,5 @@
 // ==========================================================================
-
+// Import React hooks, component imports, and icons for UI elements
 import React, { useState } from 'react';
 import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
 import { useQuery, QueryClient } from "@tanstack/react-query"
@@ -7,7 +7,7 @@ import FileUploadDialog from "@/components/FileUploadDialog";
 import DalleGenerateDialog from "./DalleGenerateDialog";
 import PrivacyDialog from "./PrivacyDialog"; // Import PrivacyDialog component
 
-
+// Icons imported for use in the UI, providing visual cues for various actions or statuses
 import {
     IconArrowWaveRightUp,
     IconBoxAlignRightFilled,
@@ -18,7 +18,7 @@ import {
     IconTableColumn,
 } from "@tabler/icons-react";
 
-
+// Asynchronous function to fetch the list of user uploads from the backend
 const userUploadsQueryFn = async () => {
     const response = await fetch("/api/files/list-user-uploads")
     if (response.ok) {
@@ -27,6 +27,7 @@ const userUploadsQueryFn = async () => {
     throw new Error("Failed to fetch user data.")
 }
 
+// Asynchronous function to fetch the list of system-generated files
 const systemGensQueryFn = async () => {
     const response = await fetch("/api/files/list-system-generations")
     if (response.ok) {
@@ -35,6 +36,7 @@ const systemGensQueryFn = async () => {
     throw new Error("Failed to fetch user data")
 }
 
+// Type definition for user media files, detailing the structure of each file object
 type UserMedia = {
     uuid: string
     name: string
@@ -45,6 +47,8 @@ type UserMedia = {
     is_processed: boolean
     is_public: boolean;
 }
+
+// Type definition for the props expected by the PrivacyDialog component
 type PrivacyDialogProps = {
     isOpen: boolean;
     onClose: () => void;
@@ -52,6 +56,7 @@ type PrivacyDialogProps = {
     onVisibilityChange: (fileId: string, isPublic: boolean) => void;
 };
 
+// Array of JSX elements representing icons, used randomly to add visual variety
 const icons = [
     <IconClipboardCopy className="h-4 w-4 text-neutral-500" />,
     <IconFileBroken className="h-4 w-4 text-neutral-500" />,
@@ -62,12 +67,15 @@ const icons = [
     <IconBoxAlignRightFilled className="h-4 w-4 text-neutral-500" />,
 ]
 
+// Instantiate a new QueryClient for managing queries and their cache
 const queryClient = new QueryClient()
 
+// Main component function that renders the media grid, including generative gallery and user uploads
 export default function MediaGrid() {
     const [privacyDialogOpen, setPrivacyDialogOpen] = useState(false);
     const [selectedFile, setSelectedFile] = useState<UserMedia | null>(null);
 
+    // Custom SVG icons representing actionable states (e.g., green circle for public visibility)
     const GreenCircleIcon = ({ className, onClick }: { className: string; onClick: () => void }) => (
         <svg onClick={onClick} className={`h-6 w-6 text-green-500 cursor-pointer ${className}`} fill="currentColor" viewBox="0 0 20 20">
           <circle cx="10" cy="10" r="10" />
@@ -80,7 +88,7 @@ export default function MediaGrid() {
         </svg>
       );
       
-
+    // Delete icon with an onClick event handler for removing files
     const DeleteIcon = ({ className, onClick }: { className: string, onClick: any }) => (
         <svg onClick={onClick} className={`h-6 w-6 text-red-500 cursor-pointer ${className}`} fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M8.707 10l-3-3-1.414 1.414L7.293 11.5l-3 3 1.414 1.414 3-3 3 3 1.414-1.414-3-3 3-3-1.414-1.414-3 3z" clipRule="evenodd" />
@@ -88,10 +96,11 @@ export default function MediaGrid() {
     );
 
 
-
+    // React Query hooks to fetch data for system generations and user uploads, using the defined asynchronous functions
     const { data: systemGenerationsData, refetch: refetchGenerations } = useQuery<UserMedia[]>({ queryKey: ["systemMedia"], queryFn: systemGensQueryFn }, queryClient);
     const { data: userUploadsData, refetch: refetchUploads } = useQuery<UserMedia[]>({ queryKey: ["userMedia"], queryFn: userUploadsQueryFn }, queryClient);
 
+    // Processing and mapping of fetched data to renderable components for the UI, incorporating dynamic icons and actions
     const systemGenerations = systemGenerationsData ? systemGenerationsData.map(item => ({
         title: item.name,
         header:
@@ -106,6 +115,7 @@ export default function MediaGrid() {
         onClick?: () => void;
     };
 
+    // Mapping of user uploads to renderable components, including visibility toggle icons and delete functionality
     const userUploads = userUploadsData ? userUploadsData.map((item, i) => ({
         title: item.name,
         header: (
@@ -123,7 +133,7 @@ export default function MediaGrid() {
     })) : [];
 
 
-
+    // Handlers for opening/closing the privacy dialog, and for updating file visibility state
     const handlePrivacyDialogOpen = (file: UserMedia) => {
         setSelectedFile(file);
         setPrivacyDialogOpen(true);
@@ -134,6 +144,7 @@ export default function MediaGrid() {
     };
 
     const handleVisibilityChange = async (fileId: string, isPublic: boolean) => {
+        // Functionality for updating the visibility state of a file, with error handling and state refreshing
         try {
             const response = await fetch('/api/files/update-file-visibility', {
                 method: 'PATCH', // Change this from 'POST' to 'PATCH'
@@ -159,6 +170,7 @@ export default function MediaGrid() {
     };
 
     const handleDelete = async (fileId: any) => {
+        // Functionality for deleting a file, with confirmation dialog and error handling
         if (confirm('Are you sure you want to delete this item?')) {
             try {
                 const queryParams = new URLSearchParams({ file_id: fileId });
@@ -189,7 +201,7 @@ export default function MediaGrid() {
 
 
 
-
+    // Main render method for the component, organizing the content into sections and incorporating the Dialog components
     return (
         <div>
             <section>
@@ -239,11 +251,14 @@ export default function MediaGrid() {
     );
 }
 
+// Skeleton loaders for async content, providing a placeholder while data is being fetched
 const Skeleton = () => (
     <div className="flex flex-1 w-full square-aspect min-h-[6rem] rounded-xl bg-gradient-to-br from-neutral-200 dark:from-neutral-900 dark:to-neutral-800 to-neutral-100"></div>
 );
 
+// Placeholder items for initial render or in case of fetch failure, providing default content
 const items = [
+    // Array of objects representing placeholder content, each with a title, header (skeleton loader), and icon
     {
         title: "The Dawn of Innovation",
         header: <Skeleton />,
