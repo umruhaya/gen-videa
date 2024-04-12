@@ -10,6 +10,7 @@ python-jose
 passlib
 openai
 google-cloud-storage
+google-cloud-aiplatform
 numpy
 opencv-python-headless
 psycopg2-binary # for local dev
