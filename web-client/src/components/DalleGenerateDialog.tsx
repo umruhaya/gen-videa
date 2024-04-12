@@ -99,14 +99,14 @@ export default function DalleGenerateDialog({ invalidate }: DalleGenerateProps) 
                         Unleash the power of DALL·E to generate images from text prompts.
                     </DialogDescription>
                 </DialogHeader>
-                // Conditionally displays a loading message when the image is being generated.
+                {/* Conditionally displays a loading message when the image is being generated.*/}
                 {dalle.state === "generating" && (
                     <div>Generating image...</div>
                 )}
-                // Input field for entering the text prompt for DALL·E image generation.
+                {/* Input field for entering the text prompt for DALL·E image generation.*/}
                 <Label htmlFor="prompt">Prompt</Label>
                 <Input id="prompt" value={dalle.prompt} onChange={(e) => $dalleGenerate.set({ ...dalle, prompt: e.target.value })} />
-                // Footer containing the generate button, disabled during the image generation process.
+                {/* Footer containing the generate button, disabled during the image generation process.*/}
                 <DialogFooter>
                     <Button onClick={handleSubmit} disabled={dalle.state === "generating"}>Generate</Button>
                 </DialogFooter>
