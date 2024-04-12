@@ -24,9 +24,12 @@ class File(Base):
     extension = Column(String(length=16), nullable=False)
     is_public = Column(Boolean, default=False, nullable=False)
     is_uploaded = Column(Boolean, default=False, nullable=False)
-    user_email = Column(String(length=256), ForeignKey('auth_user.email'))
+    user_email = Column(String(length=256), ForeignKey('auth_user.email'), nullable=False)
     content_type = Column(SQLEnum(FileType), nullable=False)
     source = Column(SQLEnum(FileSource), nullable=False)
 
     # This will enable you to access the user directly from a File instance
     user = relationship("User", back_populates="files")
+
+    # Many-to-many relationship with Completion
+    completions = relationship("Completion", secondary='completion_file_link', back_populates="files")    

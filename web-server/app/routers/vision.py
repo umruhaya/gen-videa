@@ -6,9 +6,9 @@ from pydantic import BaseModel
 from app.services.storage_service import upload_file_to_storage, download_file_from_storage, generate_get_presigned_url
 from app.services.gemini_service import use_gemini, GeminiRequest, GeminiMediaPart
 from app.settings import settings as env
-from app.models.storage import File, FileSource, FileType
+from app.models import File, Completion, CompletionFileLink
 from app.dependencies import db_dependency, user_dependency
-from app.responses import unauthorized_response, not_found_response, conflict_response
+from app.responses import unauthorized_response, bad_request_response
 
 router = APIRouter(prefix='/vision', tags=['vision'])
 
@@ -18,7 +18,7 @@ class MultimodalCompletionRequest(BaseModel):
 
 MAX_ALLOWED_LENGTH = 5
 
-@router.post("/generate-multimodal-response", responses={401: unauthorized_response, 400: {"description": "Bad request"}})
+@router.post("/generate-multimodal-response", responses={401: unauthorized_response, 400: bad_request_response})
 def generate_multimodal_completion(_: user_dependency, db: db_dependency, request: MultimodalCompletionRequest):
     """
     max allowed length of file_ids is 5
@@ -52,3 +52,31 @@ def generate_multimodal_completion(_: user_dependency, db: db_dependency, reques
         logging.info("Gemini completion: %s", completion)
 
     return StreamingResponse(streamer(), media_type="text/event-stream")
+
+class MultimodalCompletionRequest(BaseModel):
+    file_ids: list[str]
+    category: str
+    completion: str
+    client_locale_time: str
+
+@router.post("/create-mulitmodal-completion", responses={401: unauthorized_response, 400: bad_request_response})
+def create_multimodal_completion(user: user_dependency, db: db_dependency, request: MultimodalCompletionRequest):
+    files = db.query(File).filter(File.uuid.in_(request.file_ids)).all()
+    if len(files) > MAX_ALLOWED_LENGTH:
+        raise HTTPException(status_code=400, detail="Too many files")
+    
+    completion = Completion(
+        user_email=user["email"],
+        category=request.category,
+        completion=request.completion,
+        client_locale_time=request.client_locale_time,
+    )
+    db.add(completion)
+    db.commit()
+
+    for file in files:
+        link = CompletionFileLink(completion_id=completion.id, file_id=file.id)
+        db.add(link)
+    
+    db.commit()
+    return Response(status_code=200, content="Multimodal completion created.", media_type="text/plain")

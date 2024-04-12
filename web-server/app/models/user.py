@@ -6,11 +6,14 @@ class User(Base):
     __tablename__ = 'auth_user'
 
     email = Column(String(length=64), primary_key=True)
-    username = Column(String(length=64), unique=True)
+    username = Column(String(length=64), unique=True, nullable=False)
     password = Column(String(length=128), nullable=False)
     profile_picture = Column(String(length=128), nullable=True)
 
-    # relationship with File model
+    # Relationship with Completion model
+    completions = relationship("Completion", back_populates="user", cascade="all, delete-orphan")
+
+    # Relationship with File model
     files = relationship("File", back_populates="user", cascade="all, delete-orphan")
 
     def __repr__(self):
