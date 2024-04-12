@@ -8,13 +8,15 @@
 #     && apk --purge del .build-deps
 
 # or use a base image with pre compiled binaries for faster build times - the image is private btw :)
-FROM us-central1-docker.pkg.dev/jetrr-vision/genvidea-main/python-psycopg2:3.10-alpine
+FROM python:3.10-slim
 
 # Set the working directory in the container to /app
 WORKDIR usr/src/app
 
 # Copy only the requirements.txt first, to leverage Docker cache
 COPY ./requirements.txt .
+
+RUN apt-get update && apt-get install ffmpeg libsm6 libxext6  -y
 
 # Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt

@@ -1,5 +1,6 @@
 from google.cloud import storage
 from datetime import timedelta
+import io
 
 def list_files(bucket_name, prefix=None):
     storage_client = storage.Client()
@@ -16,6 +17,15 @@ def upload_file_to_storage(file, bucket_name: str, filename: str, content_type='
     # Upload the content to the blob
     blob.upload_from_string(content,num_retries=3, content_type=content_type)
     return True
+
+def download_file_from_storage(bucket_name, blob_name):
+    storage_client = storage.Client()
+    bucket = storage_client.get_bucket(bucket_name)
+    blob = bucket.blob(blob_name)
+    file_obj = io.BytesIO()
+    blob.download_to_file(file_obj)
+    file_obj.seek(0)  # Move to the beginning of the file-like object
+    return file_obj
 
 def does_file_exist(bucket_name, blob_name):
     storage_client = storage.Client()

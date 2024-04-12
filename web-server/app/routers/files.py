@@ -6,7 +6,7 @@ from app.models.user import User
 from app.dependencies import db_dependency, user_dependency
 from app.responses import unauthorized_response, not_found_response, bad_request_response, media_type_not_supported
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 import mimetypes
 import uuid
 import os
@@ -72,6 +72,7 @@ async def create_file_upload_url(db: db_dependency, user: user_dependency, file:
 class FileInfo(BaseModel):
     uuid: str
     name: str
+    caption: Optional[str]
     extension: str
     content_type: str
     is_uploaded: bool
@@ -92,6 +93,7 @@ async def list_user_uploads(db: db_dependency, user: user_dependency, public_onl
     files = [FileInfo(
                 uuid=file.uuid,
                 name=file.human_readable_name,
+                caption=file.caption,
                 extension=file.extension,
                 content_type=file.content_type,
                 is_uploaded=file.is_uploaded,
@@ -113,6 +115,7 @@ async def list_system_generations(db: db_dependency, user: user_dependency, publ
     files = [FileInfo(
                 uuid=file.uuid,
                 name=file.human_readable_name,
+                caption=file.caption,
                 extension=file.extension,
                 content_type=file.content_type,
                 is_uploaded=file.is_uploaded,
@@ -139,6 +142,7 @@ async def list_public_uploads(db: db_dependency, user: user_dependency, uploaded
                 uuid=file.uuid,
                 name=file.human_readable_name,
                 extension=file.extension,
+                caption=file.caption,
                 content_type=file.content_type,
                 is_uploaded=file.is_uploaded,
                 is_public=file.is_public,
@@ -194,3 +198,20 @@ async def delete_file_from_storage(db: db_dependency, user: user_dependency, fil
     
     # Return a success response
     return Response(status_code=status.HTTP_200_OK, content="File deleted.", media_type="text/plain")
+
+class UpdateFileCaptionRequest(BaseModel):
+    file_id: str
+    caption: str
+
+@router.patch("/update-file-caption", responses={401: unauthorized_response, 404: not_found_response})
+def update_file_caption(db: db_dependency, user: user_dependency, request: UpdateFileCaptionRequest):
+    # Attempt to fetch the file with the given ID and user's email
+    file = db.query(File).filter(File.uuid == request.file_id, File.user_email == user["email"]).first()
+    
+    # Check if the file exists
+    if not file:
+        # If the file does not exist, return a 404 Not Found response
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="File not found.")
+    
+    file.caption = request.caption
+    db.commit()
