@@ -11,7 +11,11 @@ resource "google_sql_database_instance" "postgres_instance" {
     }
 
     ip_configuration {
-      ipv4_enabled    = true
+      ipv4_enabled = true
+      authorized_networks {
+        name  = "Allow All"
+        value = "0.0.0.0/0"
+      }
     }
   }
 }

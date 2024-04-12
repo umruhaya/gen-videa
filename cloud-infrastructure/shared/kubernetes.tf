@@ -28,12 +28,12 @@ resource "google_container_cluster" "genvidea_cluster" {
 
     resource_limits {
       resource_type = "memory"
-      minimum       = 1024  # Specify the minimum amount of memory in MB
+      minimum       = 1024    # Specify the minimum amount of memory in MB
       maximum       = 1048576 # 1 TB
     }
 
   }
-  
+
   workload_identity_config {
     workload_pool = "${data.google_project.project.project_id}.svc.id.goog"
   }
