@@ -2,7 +2,7 @@ import asyncio
 import os
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request, Response
-from app.routers import auth, webhook, files, openai, profile
+from app.routers import auth, webhook, files, openai, profile, vision
 from app.dependencies import user_dependency, db_dependency
 from app.models import User
 from app.responses import unauthorized_response
@@ -48,6 +48,7 @@ app.include_router(webhook.router)
 app.include_router(files.router)
 app.include_router(openai.router)
 app.include_router(profile.router)
+app.include_router(vision.router)
 
 @app.get("/")
 async def root():
