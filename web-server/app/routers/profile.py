@@ -1,3 +1,4 @@
+from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from sqlalchemy.exc import IntegrityError
 from app.settings import settings as env
@@ -13,6 +14,8 @@ router = APIRouter(prefix='/profile', tags=['profile'])
 class UserSettingsResponse(BaseModel):
     username: str
     email: str
+    bio: Optional[str]
+    profile_picture: Optional[str]
 
 @router.get("/user-settings",
     responses={
@@ -30,14 +33,26 @@ async def get_user_settings(user: user_dependency, db: db_dependency) -> UserSet
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     
     # Construct the UserSettingsResponse object
-    return UserSettingsResponse(username=db_user.username, email=db_user.email)
+    return UserSettingsResponse(
+        username=db_user.username, 
+        email=db_user.email, 
+        bio=db_user.bio, 
+        profile_picture=db_user.profile_picture
+    )
 class UserSettingsUpdateRequest(BaseModel):
-    username: str
+    username: Optional[str] = None
+    bio: Optional[str] = None
+    profile_picture: Optional[str] = None
 
 @router.post("/user-settings", responses={401: unauthorized_response, 409: conflict_response})
 async def update_user_settings(user: user_dependency, db: db_dependency, settings: UserSettingsUpdateRequest):
     user = db.query(User).filter(User.email == user["email"]).first()
-    user.username = settings.username
+    if settings.username:
+        user.username = settings.username
+    if settings.bio:
+        user.bio = settings.bio
+    if settings.profile_picture:
+        user.profile_picture = settings.profile_picture
     try:
         db.commit()
     except IntegrityError as e:

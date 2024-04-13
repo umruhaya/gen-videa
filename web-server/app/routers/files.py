@@ -152,6 +152,26 @@ async def list_public_uploads(db: db_dependency, user: user_dependency, uploaded
             ) for file, user in db_files]
     return files
 
+@router.get("/get-file/{file_id}", responses={401: unauthorized_response, 404: not_found_response})
+async def get_file(db: db_dependency, user: user_dependency, file_id: str) -> FileInfo:
+    # Match the file with the given ID
+    # either the file is uploaded by the user (match with email) or it is public
+    file = db.query(File).filter(
+        (File.uuid == file_id) & ((File.user_email == user["email"]) | File.is_public)
+    ).first()
+    if not file:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="File not found.")
+    return FileInfo(
+        uuid=file.uuid,
+        name=file.human_readable_name,
+        caption=file.caption,
+        extension=file.extension,
+        content_type=file.content_type,
+        is_uploaded=file.is_uploaded,
+        is_public=file.is_public,
+        url=generate_get_presigned_url(file.bucket, file.name),
+    )
+
 class FileVisibilityUpdateRequest(BaseModel):
     file_id: str
     is_public: bool
