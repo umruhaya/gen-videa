@@ -16,7 +16,7 @@ class FileSource(enum.Enum):
 class File(Base):
     __tablename__ = 'file'
 
-    uuid = Column(String(length=64), primary_key=True)
+    uuid = Column(String(length=64), primary_key=True, nullable=False)
     bucket = Column(String(length=64), nullable=False)
     name = Column(String(length=256), nullable=False)
     caption = Column(Text, nullable=True)

@@ -1,14 +1,17 @@
 import logging
 import mimetypes
+import datetime
+import dateutil.parser
+from uuid import uuid4
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from fastapi.responses import StreamingResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 from app.services.storage_service import upload_file_to_storage, download_file_from_storage, generate_get_presigned_url
 from app.services.gemini_service import use_gemini, GeminiRequest, GeminiMediaPart
 from app.settings import settings as env
 from app.models import File, Completion, CompletionFileLink
 from app.dependencies import db_dependency, user_dependency
-from app.responses import unauthorized_response, bad_request_response
+from app.responses import unauthorized_response, bad_request_response, not_found_response
 
 router = APIRouter(prefix='/vision', tags=['vision'])
 
@@ -65,18 +68,44 @@ def create_multimodal_completion(user: user_dependency, db: db_dependency, reque
     if len(files) > MAX_ALLOWED_LENGTH:
         raise HTTPException(status_code=400, detail="Too many files")
     
+    print(dateutil.parser.isoparse(request.client_locale_time))
+
     completion = Completion(
         user_email=user["email"],
         category=request.category,
         completion=request.completion,
-        client_locale_time=request.client_locale_time,
+        created_at=dateutil.parser.isoparse(request.client_locale_time),
     )
     db.add(completion)
     db.commit()
 
     for file in files:
-        link = CompletionFileLink(completion_id=completion.id, file_id=file.id)
+        link = CompletionFileLink(completion_id=completion.id, file_uuid=file.uuid)
         db.add(link)
-    
     db.commit()
+
     return Response(status_code=200, content="Multimodal completion created.", media_type="text/plain")
+class CompletionResponse(BaseModel):
+    id: int
+    created_at: datetime.datetime
+    user_email: str
+    category: str
+    completion: str
+
+@router.get("/get-multimodal-completions", responses={401: unauthorized_response})
+def get_multimodal_completions(user: user_dependency, db: db_dependency) -> list[CompletionResponse]:
+    completions = db.query(Completion).filter(Completion.user_email == user["email"]).all()
+    return completions
+
+@router.get("/get-multimodal-completion/{completion_id}", responses={401: unauthorized_response, 404: not_found_response})
+def get_multimodal_completion(user: user_dependency, db: db_dependency, completion_id: str) -> CompletionResponse:
+    completion = db.query(Completion).filter(Completion.id == completion_id).first()
+    if not completion:
+        raise HTTPException(status_code=404, detail="Completion not found")
+    
+    return completion
+
+@router.get("get-completions-by-file/{file_id}", responses={401: unauthorized_response})
+def get_completions_by_file(user: user_dependency, db: db_dependency, file_id: str) -> list[CompletionResponse]:
+    completions = db.query(Completion).join(CompletionFileLink).filter(CompletionFileLink.file_uuid == file_id).all()
+    return completions

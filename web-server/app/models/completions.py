@@ -6,7 +6,7 @@ from app.database import Base
 class Completion(Base):
     __tablename__ = 'completions'
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
     created_at = Column(DateTime, default=func.now(), nullable=False)
     user_email = Column(String(length=64), ForeignKey('auth_user.email'), nullable=False)
     category = Column(String(length=64), nullable=False)

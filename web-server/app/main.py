@@ -38,7 +38,7 @@ async def lifespan(app: FastAPI):
     print("Application shutdown started")
 
     # Wait for a the specific period to allow ongoing requests to complete
-    await asyncio.sleep(GRACEFUL_SHUTDOWN_PERIOD)
+    # await asyncio.sleep(GRACEFUL_SHUTDOWN_PERIOD)
     print("Application shutdown complete")
 
 app = FastAPI(lifespan=lifespan)
