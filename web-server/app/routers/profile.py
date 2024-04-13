@@ -58,4 +58,10 @@ async def update_user_settings(user: user_dependency, db: db_dependency, setting
     except IntegrityError as e:
         db.rollback()
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Username already exists.")
-    return Response(status_code=status.HTTP_200_OK, content="User settings updated.", media_type="text/plain")
+    
+    # sent updated user settings
+    return UserSettingsUpdateRequest(
+        username=user.username,
+        bio=user.bio,
+        profile_picture=user.profile_picture
+    )
