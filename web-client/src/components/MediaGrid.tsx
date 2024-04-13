@@ -16,7 +16,12 @@ import {
     IconTableColumn,
 } from "@tabler/icons-react";
 import axios from 'axios';
-import { Tabs } from "./ui/tabs";
+import {
+    Tabs,
+    TabsContent,
+    TabsList,
+    TabsTrigger,
+} from "@/components/ui/tabs"
 
 type UserMedia = {
     uuid: string
@@ -50,31 +55,33 @@ function MediaComponent({ url, type }: { url: string, type: string }) {
 function UserMediaGrid({ data, header }: { data?: UserMedia[], header: React.ReactNode }) {
 
     return (
-        <section className="bg-zinc-200 dark:bg-zinc-900 min-h-screen rounded-3xl pb-24">
+        <section className="bg-zinc-200 dark:bg-zinc-900 min-h-screen rounded-3xl pb-24 w-full px-8">
             {header}
             {data && data.length === 0 && (
                 <div className="flex justify-center w-full h-96">
                     <h2 className="text-xl font-semibold italic p-8">No media found.</h2>
                 </div>
             )}
-            <BentoGrid className="max-w-4xl mx-auto">
-                {data?.map((item, i) => (
-                    <BentoGridItem
-                        key={i}
-                        title={item.name}
-                        header={<MediaComponent url={item.url} type={item.content_type} />}
-                        className="cursor-pointer bg-transparent bg-zinc-300 dark:bg-zinc-800"
-                        onClick={() => $mediaDialog.set({
-                            fileId: item.uuid,
-                            isPublic: item.is_public,
-                            title: item.name,
-                            url: item.url,
-                            isVideo: item.content_type.includes("video"),
-                            isPersonalView: true
-                        })}
-                    />
-                ))}
-            </BentoGrid>
+            <div>
+                <BentoGrid className="max-w-4xl">
+                    {data?.map((item, i) => (
+                        <BentoGridItem
+                            key={i}
+                            title={item.name}
+                            header={<MediaComponent url={item.url} type={item.content_type} />}
+                            className="cursor-pointer bg-transparent bg-zinc-300 dark:bg-zinc-800"
+                            onClick={() => $mediaDialog.set({
+                                fileId: item.uuid,
+                                isPublic: item.is_public,
+                                title: item.name,
+                                url: item.url,
+                                isVideo: item.content_type.includes("video"),
+                                isPersonalView: true
+                            })}
+                        />
+                    ))}
+                </BentoGrid>
+            </div>
         </section>
     )
 }
@@ -108,7 +115,7 @@ export default function MediaGrid() {
         {
             title: "My Uploads",
             value: "userUploads",
-            content: < UserMediaGrid
+            content: <UserMediaGrid
                 data={userUploadsData}
                 header={
                     <div className="w-full flex justify-between my-4">
@@ -118,14 +125,23 @@ export default function MediaGrid() {
                         </div>
                     </div >
                 } />
-        }
+        },
     ]
 
     return (
         <div>
-            <div className="h-[20rem] md:h-[40rem] [perspective:1000px] relative b flex flex-col max-w-5xl mx-auto w-full  items-start justify-start my-4">
-                <Tabs tabs={tabs} />
-            </div>
+            <Tabs defaultValue="system-generations">
+                <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="system-generations">Dalle Generations</TabsTrigger>
+                    <TabsTrigger value="user-uploads">User Uploads</TabsTrigger>
+                </TabsList>
+                <TabsContent value="system-generations">
+                    {tabs[0].content}
+                </TabsContent>
+                <TabsContent value="user-uploads">
+                    {tabs[1].content}
+                </TabsContent>
+            </Tabs>
 
 
             <MediaViewDialog inValidate={() => {

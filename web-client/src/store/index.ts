@@ -26,17 +26,6 @@ export const $isDalleGenerateDialogOpen = atom(false)
 //store for the open state of the user settings dialog
 export const $isUserSettingsDialogOpen = atom(false);
 
-type UserSettings = {
-    state: "idle" | "saving" | "done" | "error";
-    username: string;
-};
-
-// Initial state of the user settings. Retrieve the current settings from your backend if needed
-export const $userSettings = atom<UserSettings>({
-    state: "idle",
-    username: "", // Initialize with the current username if available
-});
-
 type MediaDialogView = {
     fileId: string;
     isPublic: boolean;
