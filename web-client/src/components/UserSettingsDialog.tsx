@@ -87,9 +87,7 @@ export default function UserSettingsDialog({invalidate} : Props) {
         <>
             <Dialog open={isOpen} onOpenChange={(open : any) => $isUserSettingsDialogOpen.set(open)}>
             <DialogTrigger>
-                <Button>
-                    <SettingsIcon size={24} />
-                </Button>
+                <SettingsIcon size={24} />
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>

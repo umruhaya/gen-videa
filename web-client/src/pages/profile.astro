@@ -11,9 +11,9 @@ if (Astro.cookies.has("access_token") === false) {
 ---
 
 <Layout title="Genvidea">
-  <Header isLoggedIn={true} client:load />
+  <Header isLoggedIn={true} client:only />
   <main class="w-screen flex flex-col justify-center pt-12 px-12 md:px-64">
-    <UserProfileHeader client:load />
-    <MediaGrid client:load />
+    <UserProfileHeader client:only />
+    <MediaGrid client:only />
   </main>
 </Layout>

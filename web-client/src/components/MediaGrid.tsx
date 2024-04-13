@@ -16,6 +16,7 @@ import {
     IconTableColumn,
 } from "@tabler/icons-react";
 import axios from 'axios';
+import { Tabs } from "./ui/tabs";
 
 type UserMedia = {
     uuid: string
@@ -46,6 +47,38 @@ function MediaComponent({ url, type }: { url: string, type: string }) {
     );
 }
 
+function UserMediaGrid({ data, header }: { data?: UserMedia[], header: React.ReactNode }) {
+
+    return (
+        <section className="bg-zinc-200 dark:bg-zinc-900 min-h-screen rounded-3xl pb-24">
+            {header}
+            {data && data.length === 0 && (
+                <div className="flex justify-center w-full h-96">
+                    <h2 className="text-xl font-semibold italic p-8">No media found.</h2>
+                </div>
+            )}
+            <BentoGrid className="max-w-4xl mx-auto">
+                {data?.map((item, i) => (
+                    <BentoGridItem
+                        key={i}
+                        title={item.name}
+                        header={<MediaComponent url={item.url} type={item.content_type} />}
+                        className="cursor-pointer bg-transparent bg-zinc-300 dark:bg-zinc-800"
+                        onClick={() => $mediaDialog.set({
+                            fileId: item.uuid,
+                            isPublic: item.is_public,
+                            title: item.name,
+                            url: item.url,
+                            isVideo: item.content_type.includes("video"),
+                            isPersonalView: true
+                        })}
+                    />
+                ))}
+            </BentoGrid>
+        </section>
+    )
+}
+
 export default function MediaGrid() {
     const { data: systemGenerationsData, refetch: refetchGenerations } = useQuery<UserMedia[]>({
         queryKey: ["systemMedia"],
@@ -56,72 +89,49 @@ export default function MediaGrid() {
         queryFn: () => axios.get("/api/files/list-user-uploads").then(res => res.data),
     }, queryClient);
 
-    const systemGenerations = systemGenerationsData?.map((item, i) => ({
-        ...item,
-        header: <MediaComponent url={item.url} type={item.content_type} />,
-    }));
-
-    const userUploads = userUploadsData?.map((item, i) => ({
-        ...item,
-        header: <MediaComponent url={item.url} type={item.content_type} />,
-    }));
+    const tabs = [
+        {
+            title: "Generation",
+            value: "systemGenerations",
+            content: <UserMediaGrid
+                data={systemGenerationsData}
+                header={
+                    <div className="w-full flex justify-between my-4">
+                        <h2 className="my-4 text-2xl font-bold p-8">Generative Gallery</h2>
+                        <div className="mx-4 my-auto">
+                            <DalleGenerateDialog invalidate={refetchGenerations} />
+                        </div>
+                    </div>
+                }
+            />
+        },
+        {
+            title: "My Uploads",
+            value: "userUploads",
+            content: < UserMediaGrid
+                data={userUploadsData}
+                header={
+                    <div className="w-full flex justify-between my-4">
+                        <h2 className="my-4 text-2xl font-bold p-8">My Uploads</h2>
+                        <div className="mx-4 my-auto">
+                            <FileUploadDialog invalidate={refetchUploads} />
+                        </div>
+                    </div >
+                } />
+        }
+    ]
 
     return (
         <div>
-            <section>
-                <div className="w-full flex justify-between my-4">
-                    <h2 className="my-4 text-2xl font-bold">Generative Gallery</h2>
-                    <div className="mx-4 my-auto">
-                        <DalleGenerateDialog invalidate={refetchGenerations} />
-                    </div>
-                </div>
-                <BentoGrid className="max-w-4xl mx-auto">
-                    {systemGenerations?.map((item, i) => (
-                        <BentoGridItem
-                            key={i}
-                            title={item.name}
-                            header={item.header}
-                            onClick={() => $mediaDialog.set({
-                                fileId: item.uuid,
-                                isPublic: item.is_public,
-                                title: item.name,
-                                url: item.url,
-                                isVideo: item.content_type.includes("video"),
-                                isPersonalView: true
-                            })}
-                        />
-                    ))}
-                </BentoGrid>
-            </section>
-            <section>
-                <div className="w-full flex justify-between my-4">
-                    <h2 className="my-4 text-2xl font-bold">My Uploads</h2>
-                    <div className="mx-4 my-auto">
-                        <FileUploadDialog invalidate={refetchUploads} />
-                    </div>
-                </div>
-                <BentoGrid className="max-w-4xl mx-auto">
-                    {userUploads?.map((item, i) => (
-                        <BentoGridItem
-                            key={i}
-                            title={item.name}
-                            header={item.header}
-                            onClick={() => $mediaDialog.set({
-                                fileId: item.uuid,
-                                isPublic: item.is_public,
-                                title: item.name,
-                                url: item.url,
-                                isVideo: item.content_type.includes("video"),
-                                isPersonalView: true
-                            })}
-                        />
-                    ))}
-                </BentoGrid>
-            </section>
+            <div className="h-[20rem] md:h-[40rem] [perspective:1000px] relative b flex flex-col max-w-5xl mx-auto w-full  items-start justify-start my-4">
+                <Tabs tabs={tabs} />
+            </div>
+
+
             <MediaViewDialog inValidate={() => {
                 refetchGenerations();
                 refetchUploads();
-            }}/>
+            }} />
         </div>
     );
 }

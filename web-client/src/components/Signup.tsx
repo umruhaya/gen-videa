@@ -68,9 +68,9 @@ export default function SignUpComponent() {
                 window.location.href = "/signin?signup=success"
                 break
             case 409:
-                form.setError("email", {
+                form.setError(data["detail"].includes("Email") ? "email" : "username", {
                     type: "manual",
-                    message: "Email already exists.",
+                    message: data["detail"],
                 })
                 break
             case 422:

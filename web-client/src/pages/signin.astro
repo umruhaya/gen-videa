@@ -5,7 +5,7 @@ import Header from "@/components/Header";
 
 export const prerender = false;
 if (Astro.cookies.has("access_token") === true) {
-  return Astro.redirect("/dashboard");
+  return Astro.redirect("/profile");
 }
 ---
 

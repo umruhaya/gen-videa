@@ -14,6 +14,8 @@ import { $isFileUploadDialogOpen, $fileUpload } from '@/store';
 import { ToastAction } from "@/components/ui/toast"
 import { useToast } from "@/components/ui/use-toast"
 import { Toaster } from "./ui/toaster"
+import { useRef } from 'react';
+import { IconX } from '@tabler/icons-react';
 
 // Type definition for props passed to the FileUploadDialog component.
 // Includes a callback function to be called upon successful file upload.
@@ -21,10 +23,13 @@ type FileUploadDialogProps = {
     invalidate: () => void
 }
 
+const MAX_ALLOWED_VIDEO_DURATION = 120 // in seconds
+
 // The FileUploadDialog component manages file uploads through a dialog interface.
 // It provides feedback to the user via toast notifications and updates the global state accordingly.
 export default function FileUploadDialog({ invalidate }: FileUploadDialogProps) {
 
+    const inputRef = useRef<HTMLInputElement>(null)
     // Local state hooks for managing dialog visibility and file upload status.
     const isOpen = useStore($isFileUploadDialogOpen)
     const fileUpload = useStore($fileUpload)
@@ -86,7 +91,8 @@ export default function FileUploadDialog({ invalidate }: FileUploadDialogProps) 
                 })
                 $fileUpload.set(null)
                 $isFileUploadDialogOpen.set(false)
-                invalidate()
+                // Invalidate after 3 seconds to allow the file to be processed and show up in the list
+                setTimeout(() => invalidate(), 3000)
             } else {
                 toast({
                     title: "File upload failed.",
@@ -123,12 +129,63 @@ export default function FileUploadDialog({ invalidate }: FileUploadDialogProps) 
                         Upload a file to your account.
                     </DialogDescription>
                 </DialogHeader>
-                <input type="file" onChange={e => {
+                {
+                    fileUpload ? (
+                        <Button className="relative h-32 flex justify-start gap-8">
+                            {fileUpload.file.type.startsWith("video") ? (
+                                <video
+                                    src={fileUpload.previewUrl}
+                                    className="h-full"
+                                    controls
+                                />
+                            ) : (
+                                <img
+                                    src={fileUpload.previewUrl}
+                                    className="h-full"
+                                />
+                            )}
+                            <div>{fileUpload.file.name}</div>
+                            <div className="absolute top-2 right-2" onClick={() => $fileUpload.set(null)}>
+                                <IconX />
+                            </div>
+                        </Button>
+                    ) : (
+                        <Button onClick={() => inputRef.current?.click()}>
+                            Select a File
+                        </Button>
+                    )
+                }
+                <input ref={inputRef} className="hidden" type="file" accept="video/mp4,image/png,image/jpeg,video/x-matroska" onChange={async (e) => {
                     // file should not be accepted if there is already a file being uploaded
                     if (fileUpload && fileUpload?.state === "uploading") return
 
                     const file = e.target.files?.[0]
+
                     if (file) {
+                        if (file.type !== "video/mp4" && file.type !== "image/png" && file.type !== "image/jpeg") {
+                            return toast({
+                                title: "File type not supported.",
+                                description: `Only .mp4, .png, and .jpeg files are supported.`,
+                                action: (
+                                    <ToastAction altText="Ack">Ok</ToastAction>
+                                )
+                            });
+                        }
+
+                        // Check if the file is a video and perform a duration check.
+                        if (file.type.startsWith("video")) {
+                            const videoDuration = await getVideoDuration(file);
+                            if (videoDuration > MAX_ALLOWED_VIDEO_DURATION) {
+                                return toast({
+                                    title: "Video too long",
+                                    description: `Video Duration was ${videoDuration} seconds. Maximum allowed duration is ${MAX_ALLOWED_VIDEO_DURATION} seconds.`,
+                                    action: (
+                                        <ToastAction altText="Ack">Ok</ToastAction>
+                                    )
+                                });
+                            }
+                        }
+
                         const previewUrl = URL.createObjectURL(file)
                         $fileUpload.set({
                             file,
@@ -139,14 +196,8 @@ export default function FileUploadDialog({ invalidate }: FileUploadDialogProps) 
                         console.debug(previewUrl)
                     }
                 }} />
-
-                {fileUpload && (
-                    <img
-                        src={fileUpload.previewUrl}
-                        alt="Preview"
-                        className="square-aspect w-48 h-auto"
-                    />
-                )}
+                <p className="text-sm italic">Max Allowed Video Length is {MAX_ALLOWED_VIDEO_DURATION} seconds</p>
+                <p className="text-sm italic">Only .mp4, .png, and .jpeg files are supported.</p>
                 {fileUpload && (
                     <Progress value={fileUpload.progress} className="w-[60%]" />
                 )}
@@ -157,4 +208,23 @@ export default function FileUploadDialog({ invalidate }: FileUploadDialogProps) 
             <Toaster />
         </Dialog>
     )
+}
+
+// Helper function to check video duration
+async function getVideoDuration(file: File): Promise<number> {
+    return new Promise((resolve, reject) => {
+        const video = document.createElement('video');
+        video.preload = 'metadata';
+
+        video.onloadedmetadata = function () {
+            window.URL.revokeObjectURL(video.src);
+            resolve(video.duration)
+        };
+
+        video.onerror = function () {
+            reject("Error loading video metadata");
+        };
+
+        video.src = URL.createObjectURL(file);
+    });
 }

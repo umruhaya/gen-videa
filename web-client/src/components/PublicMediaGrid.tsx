@@ -49,7 +49,7 @@ const icons = [
 const queryClient = new QueryClient();
 
 export default function PublicMediaGrid() {
-  const { data: publicUploadsData, error, refetch: refetchPublicUploads } = useQuery<PublicMedia[]>({ queryKey: ["publicUploads"], queryFn: publicUploadsQueryFn }, queryClient);
+  const { data: publicUploadsData, error } = useQuery<PublicMedia[]>({ queryKey: ["publicUploads"], queryFn: publicUploadsQueryFn }, queryClient);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredUploads, setFilteredUploads] = useState<PublicMedia[]>([]);
@@ -102,7 +102,14 @@ export default function PublicMediaGrid() {
               header={<img src={item.url} alt={item.name} className="w-full h-full object-cover rounded-xl" />}
               icon={icons[i % icons.length]}
               description={"Uploaded by " + item.username}
-              onClick={() => $mediaDialog.set({ title: item.name, url: item.url, isVideo: false, uploader: item.username })}
+              onClick={() => $mediaDialog.set({ 
+                title: item.name,
+                url: item.url,
+                isVideo: false,
+                uploader: item.username,
+                fileId: item.uuid,
+                isPublic: item.is_public,
+              })}
             />
           ))}
         </BentoGrid>
