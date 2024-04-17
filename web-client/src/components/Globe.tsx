@@ -1,7 +1,11 @@
+// This component creates a 3D interactive globe visualization with animations using Framer Motion and a custom World component.
+// It's designed to display multimedia content reach and impact across different global regions with dynamic arcs to represent the connections.
+
 import { motion } from "framer-motion";
 import { World } from "@/components/ui/globe";
 
 export default function GlobeGit() {
+    // Configuration object for the globe visualization, detailing visual aspects such as color, atmosphere, and lighting
     const globeConfig = {
         pointSize: 4,
         globeColor: "#062056",
@@ -388,6 +392,7 @@ export default function GlobeGit() {
         },
     ];
 
+    // The render method returns JSX for the animated globe with a title and description
     return (
         <div className="flex flex-row items-center justify-center py-20 h-screen md:h-auto dark:bg-black bg-white relative w-full">
             <div className="max-w-7xl mx-auto w-full relative overflow-hidden h-full md:h-[70rem] px-4">
@@ -412,6 +417,7 @@ export default function GlobeGit() {
                         Dive into the world of GenVidea where boundaries blur between digital and geographical. Multimedia content is being created and shared across different cultures and regions. Experience firsthand the power of AI in bridging gaps and fostering a truly global community of creators.
                     </p>
                 </motion.div>
+                {/*Gradient effect at the bottom of the globe for visual blending into the page*/}
                 <div className="absolute w-full bottom-0 inset-x-0 h-40 bg-gradient-to-b pointer-events-none select-none from-transparent dark:to-black to-white z-40" />
                 <div className="absolute w-full -bottom-20 h-72 md:h-full z-10">
                     <World data={sampleArcs} globeConfig={globeConfig} />;
