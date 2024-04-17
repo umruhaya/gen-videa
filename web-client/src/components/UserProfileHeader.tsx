@@ -14,6 +14,9 @@ import axios from "axios";
 import Spinner from "@/components/Spinner";
 import { IconPencil } from "@tabler/icons-react";
 import { queryClient } from "@/store/query-client";
+import { useToast } from "./ui/use-toast";
+import { Toaster } from "./ui/toaster";
+import { ToastAction } from "./ui/toast";
 
 const queryFn = async () => {
   const response = await fetch("");
@@ -42,7 +45,19 @@ export default function UserProfileHeader() {
   const mutation = useMutation({
     mutationKey: ["update-profile-picture"],
     mutationFn: ({ profile_picture }: { profile_picture: string }) => axios.post("/api/profile/user-settings", { profile_picture }),
+    onSuccess: () => {
+      refetchUserSettings();
+      toast({
+        title: "Avatar Updated",
+        description: `Your avatar has been updated.`,
+        action: (
+          <ToastAction altText="Ack">Ok</ToastAction>
+        )
+      })
+    }
   }, queryClient)
+
+  const { toast } = useToast()
 
   const [selectedAvatar, setSelectedAvatar] = useState<null | string>(null);
 
@@ -56,7 +71,7 @@ export default function UserProfileHeader() {
   const [editMode, setEditMode] = useState(false);
 
   // move avatar in profile picture to first
-  const sortedAvatars = selectedAvatar ? [selectedAvatar, ...avatars.filter((url) => url !== selectedAvatar)] : avatars;
+  const sortedAvatars = data?.profile_picture ? [data?.profile_picture, ...avatars.filter((url) => url !== data?.profile_picture)] : avatars;
 
   return (
     <div>
@@ -67,9 +82,9 @@ export default function UserProfileHeader() {
               className="w-32 h-32 rounded-full bg-zinc-800 aspect-square"
               src={data?.profile_picture}
             />
-            <span 
+            <span
               className="rounded-full icon-overlay absolute top-0 left-0 w-full h-full grid place-content-center bg-gray-500 opacity-0 hover:opacity-100 bg-opacity-50 cursor-pointer transition-opacity duration-300"
-              onClick={() => setEditMode(true)}  
+              onClick={() => setEditMode(true)}
             >
               <IconPencil />
             </span>
@@ -83,8 +98,9 @@ export default function UserProfileHeader() {
             <UserSettingsDialog invalidate={refetchUserSettings} />
           </div>
         </div>
+        <Toaster />
       </section>
-      <Dialog open={(data && !data?.profile_picture) || editMode} onOpenChange={() => {editMode && setEditMode(false)}}>
+      <Dialog open={(data && !data?.profile_picture) || editMode} onOpenChange={() => { editMode && setEditMode(false) }}>
         <DialogContent className="max-w-4xl max-h-[80%] overflow-y-scroll">
           <DialogHeader>
             <DialogTitle className="text-4xl">
@@ -100,7 +116,7 @@ export default function UserProfileHeader() {
                 <div className="flex justify-center" key={url}>
                   <img
                     src={url}
-                    className={"w-48 h-48 rounded-full cursor-pointer" + (selectedAvatar === url ? " border-4 border-white" : "")}
+                    className={"w-48 h-48 rounded-full cursor-pointer" + (selectedAvatar === url ? " border-4 border-black dark:border-white" : "")}
                     onClick={() => setSelectedAvatar(url)}
                   />
                 </div>
@@ -110,8 +126,7 @@ export default function UserProfileHeader() {
           <DialogFooter>
             <Button disabled={!selectedAvatar || mutation.isPending} onClick={async () => {
               if (selectedAvatar && !mutation.isPending) {
-                await mutation.mutateAsync({ profile_picture: selectedAvatar });
-                refetchUserSettings();
+                mutation.mutate({ profile_picture: selectedAvatar });
               }
             }}>
               {mutation.isPending ? <Spinner /> : "Save"}
