@@ -6,14 +6,17 @@ import FeatureCards from "./FeatureCard";
 
 export default function GeminiEffect() {
     const ref = React.useRef(null);
+    // Initializes scroll-based animations, binding them to the ref element's scroll progress.
     const { scrollYProgress } = useScroll({
         target: ref,
         offset: ["start start", "end start"],
     });
 
-    // got these values from trail and error :)
+    // Defines the path length transitions as a function of scroll progress, optimized through experimental adjustments.
+    // got these values from trial and error :)
     const pathLengthFirst = useTransform(scrollYProgress, [0.05, 0.08, 0.1, 0.3, 0.35, 0.45], [1, 0.85, 0.6, 0.35, 0.1, 0]);
 
+    // Periodically logs the scroll progress to the console for debugging and monitoring purposes.
     useEffect(() => {
         setInterval(() => {
             console.log(scrollYProgress.get());
