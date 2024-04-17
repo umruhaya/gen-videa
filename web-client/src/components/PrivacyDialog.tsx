@@ -5,10 +5,12 @@ interface PrivacyDialogProps {
     onVisibilityChange: (fileId: string, isPublic: boolean) => void;
   }
   
-
+  // Defines a modal dialog for changing the privacy settings of a file.
   export default function PrivacyDialog({ isOpen, onClose, file, onVisibilityChange }: PrivacyDialogProps) {
+    // Exit early if the dialog is not open or if there's no file data.
     if (!isOpen || !file) return null;
   
+  // Render a modal with options to change the privacy of a file.
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-10">
       <div className="flex items-center justify-center h-full">

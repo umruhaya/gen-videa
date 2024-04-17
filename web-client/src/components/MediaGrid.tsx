@@ -65,6 +65,7 @@ function MediaComponent({ url, type }: { url: string, type: string }) {
     );
 }
 
+// Render a dynamic grid layout using BentoGrid to display media items, enabling user interaction through clicking on individual items.
 function UserMediaGrid({ data, header }: { data?: UserMedia[], header: React.ReactNode }) {
 
     return (
@@ -99,7 +100,10 @@ function UserMediaGrid({ data, header }: { data?: UserMedia[], header: React.Rea
     )
 }
 
+
+// Set up tabbed navigation with dynamic content rendering based on tab selection, enhancing user interface navigation.
 export default function MediaGrid() {
+    // Use React Query to fetch user media and system generated media from the server asynchronously.
     const { data: systemGenerationsData, refetch: refetchGenerations } = useQuery<UserMedia[]>({
         queryKey: ["systemMedia"],
         queryFn: () => axios.get("/api/files/list-system-generations").then(res => res.data),
@@ -109,6 +113,7 @@ export default function MediaGrid() {
         queryFn: () => axios.get("/api/files/list-user-uploads").then(res => res.data),
     }, queryClient);
 
+    // Define state hooks for filtering media by content type and visibility, providing interactive filter capabilities to the user.
     const [contentTypeFilter, setContentTypeFilter] = useState<"all" | "video" | "image">("all");
     const [visibilityFilter, setVisibilityFilter] = useState<"all" | "public" | "private">("all");
 

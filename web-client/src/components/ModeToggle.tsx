@@ -10,16 +10,19 @@ import {
 } from "@/components/ui/dropdown-menu"
 
 export default function ModeToggle() {
+    // State to manage the theme: 'theme-light' (default), 'dark', or 'system'
     const [theme, setThemeState] = React.useState<
         "theme-light" | "dark" | "system"
     >("theme-light")
 
     React.useEffect(() => {
+    // Effect to initialize the theme based on the current class on <html> tag
         const isDarkMode = document.documentElement.classList.contains("dark")
         setThemeState(isDarkMode ? "dark" : "theme-light")
     }, [])
 
     React.useEffect(() => {
+    // Effect to apply the selected theme to the <html> tag
         const isDark =
             theme === "dark" ||
             (theme === "system" &&
@@ -27,6 +30,7 @@ export default function ModeToggle() {
         document.documentElement.classList[isDark ? "add" : "remove"]("dark")
     }, [theme])
 
+    // Dropdown menu to change theme settings with dynamic icon toggling based on theme state
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
