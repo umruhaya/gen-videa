@@ -35,6 +35,7 @@ export default function MediaViewDialog({ inValidate }:MediaDialogView) {
 
     const mediaDialog = useStore($mediaDialog)
 
+    // Mutation hook for updating file visibility, managing API calls and state updates on success.
     const visibilityMutation = useMutation({
         mutationKey: ["update-file-visibility"],
         mutationFn: ({ fileId, isPublic }: VisibilityMutationParams) => axios.patch('/api/files/update-file-visibility', {
@@ -47,6 +48,7 @@ export default function MediaViewDialog({ inValidate }:MediaDialogView) {
         }
     }, queryClient);
 
+    // Mutation hook for deleting files, managing API calls and state updates on success.
     const deleteMutation = useMutation({
         mutationKey: ["delete-file"],
         mutationFn: ({ fileId }: DeleteMutationParams) => axios.delete(`/api/files/delete-file?file_id=${fileId}`),

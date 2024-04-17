@@ -1,19 +1,22 @@
 import ModeToggle from "@/components/ModeToggle";
 import { Button } from "@/components/ui/button";
 
+// Type definition for the Header component props
 type HeaderProps = {
     isLoggedIn: boolean;
     showHomeButton?: boolean; 
 }
 
+// Header component accepting isLoggedIn status, optionally showing a home button
 function Header({ isLoggedIn, showHomeButton = false }: HeaderProps = { isLoggedIn: true }) {
 
+    // Function to handle user logout through a POST request and reload the page
     const handleLogout = async () => {
         const response = await fetch("/api/auth/logout", {
             method: "POST",
         })
-            .catch(() => { })
-        window.location.reload();
+            .catch(() => { }) // Catch and ignore any errors during logout
+        window.location.reload(); // Reload the page to update the UI state
     }
 
     return (
@@ -21,7 +24,7 @@ function Header({ isLoggedIn, showHomeButton = false }: HeaderProps = { isLogged
 
             <nav className="flex justify-between items-center w-full">
                 <div className="flex items-center space-x-4">
-                <ModeToggle />
+                <ModeToggle /> {/*Allows the user to toggle between light and dark mode.*/}
                 {showHomeButton && (
                     <a href="/">
                         <Button
@@ -47,4 +50,4 @@ function Header({ isLoggedIn, showHomeButton = false }: HeaderProps = { isLogged
         </header>
     );
 }
-export default Header;
+export default Header; // Export the Header for use in other parts of the application

@@ -45,6 +45,7 @@ const icons = [
     <IconBoxAlignRightFilled className="h-4 w-4 text-neutral-500" />,
 ]
 
+// Initializes and configures the user media grid component, displaying different media types (video or image) based on the content type.
 function MediaComponent({ url, type }: { url: string, type: string }) {
     return type.includes("video") ? (
         <video controls src={url} className="w-full h-full object-cover rounded-xl" />
@@ -53,6 +54,7 @@ function MediaComponent({ url, type }: { url: string, type: string }) {
     );
 }
 
+// Component for rendering a grid of media items using BentoGrid. It manages click events to open media details in a dialog.
 function UserMediaGrid({ data, header }: { data?: UserMedia[], header: React.ReactNode }) {
 
     return (
@@ -87,6 +89,7 @@ function UserMediaGrid({ data, header }: { data?: UserMedia[], header: React.Rea
     )
 }
 
+// Main component for managing media grid tabs, handling data fetching and dialog interactions for user and system media.
 export default function MediaGrid() {
     const { data: systemGenerationsData, refetch: refetchGenerations } = useQuery<UserMedia[]>({
         queryKey: ["systemMedia"],
@@ -97,6 +100,7 @@ export default function MediaGrid() {
         queryFn: () => axios.get("/api/files/list-user-uploads").then(res => res.data),
     }, queryClient);
 
+    // Defines tab structures and content for displaying different media categories and associated actions.
     const tabs = [
         {
             title: "Generation",
