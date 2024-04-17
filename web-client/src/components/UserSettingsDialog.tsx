@@ -31,6 +31,7 @@ type Props = {
     invalidate: () => void
 }
 
+// Define user settings form validation schema using zod.
 const formSchema = z.object({
     username: z.string().min(3).max(32),
     bio: z.string().max(256),
@@ -47,11 +48,13 @@ export default function UserSettingsDialog({ invalidate }: Props) {
     const isOpen = useStore($isUserSettingsDialogOpen);
     const { toast } = useToast();
 
+    // Query for fetching user settings.
     const { data: settingsData, refetch } = useQuery<UserSettingsData>({
         queryKey: ["userSettings"],
         queryFn: () => axios.get("/api/profile/user-settings").then(res => res.data),
     }, queryClient)
 
+    // Mutation for updating user settings.
     const settingsMutation = useMutation<UserSettingsData, Error, Partial<UserSettingsData>, unknown>({
         mutationKey: ["update-profile-picture"],
         mutationFn: (data) => axios.post("/api/profile/user-settings", data).then(res => res.data),
@@ -62,7 +65,7 @@ export default function UserSettingsDialog({ invalidate }: Props) {
                 description: "Your username has been updated.",
                 action: <ToastAction altText="Ack">Ok</ToastAction>
             });
-            //retching the user settings after the update
+            // Refresh user settings
             invalidate();
         },
         onError: (error) => {
@@ -84,6 +87,7 @@ export default function UserSettingsDialog({ invalidate }: Props) {
         resolver: zodResolver(formSchema),
     });
 
+    // Effect to populate form fields when user settings are loaded.
     useEffect(() => {
         if (!settingsData) return;
         setValue("username", settingsData.username)

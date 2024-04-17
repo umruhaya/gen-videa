@@ -18,6 +18,7 @@ import { useToast } from "./ui/use-toast";
 import { Toaster } from "./ui/toaster";
 import { ToastAction } from "./ui/toast";
 
+// Fetches the user's profile settings such as username, bio, and profile picture.
 const queryFn = async () => {
   const response = await fetch("");
   if (response.ok) {
@@ -42,6 +43,7 @@ export default function UserProfileHeader() {
     queryFn: () => axios.get("/api/profile/user-settings").then(res => res.data),
   }, queryClient);
 
+  // Mutation hook for updating the user's profile picture.
   const mutation = useMutation({
     mutationKey: ["update-profile-picture"],
     mutationFn: ({ profile_picture }: { profile_picture: string }) => axios.post("/api/profile/user-settings", { profile_picture }),
@@ -68,7 +70,7 @@ export default function UserProfileHeader() {
   }, [data?.profile_picture])
 
   // Indicates if the user is in edit mode for the profile picture and avatar selection.
-  const [editMode, setEditMode] = useState(false);
+  const [editMode, setEditMode] = useState(false); 
 
   // move avatar in profile picture to first
   const sortedAvatars = data?.profile_picture ? [data?.profile_picture, ...avatars.filter((url) => url !== data?.profile_picture)] : avatars;

@@ -35,6 +35,7 @@ export default function MediaViewDialog({ inValidate }:MediaDialogView) {
 
     const mediaDialog = useStore($mediaDialog)
 
+    // Initializes mutations for updating file visibility and handling delete operations, using react-query for async operations.
     const visibilityMutation = useMutation({
         mutationKey: ["update-file-visibility"],
         mutationFn: ({ fileId, isPublic }: VisibilityMutationParams) => axios.patch('/api/files/update-file-visibility', {
@@ -47,6 +48,7 @@ export default function MediaViewDialog({ inValidate }:MediaDialogView) {
         }
     }, queryClient);
 
+    // Handles file deletion with confirmation dialog, ensuring the file is permanently removed from the server.
     const deleteMutation = useMutation({
         mutationKey: ["delete-file"],
         mutationFn: ({ fileId }: DeleteMutationParams) => axios.delete(`/api/files/delete-file?file_id=${fileId}`),
@@ -63,6 +65,7 @@ export default function MediaViewDialog({ inValidate }:MediaDialogView) {
 
     console.log("isPending", visibilityMutation.isPending)
 
+    // Renders a dialog with detailed media information and actions, allowing for dynamic updates to visibility and file deletion.
     return (
         <Dialog open={Boolean(mediaDialog)} onOpenChange={(open) => open || $mediaDialog.set(null)}>
             <DialogContent className="md:max-w-4xl max-w-sm overflow-y-scroll">

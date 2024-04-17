@@ -1,3 +1,4 @@
+// Renders a spinning SVG icon to visually indicate loading or processing state to the user.
 export default function Spinner() {
     return (
         <div role="status">
