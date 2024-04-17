@@ -4,6 +4,8 @@ import MediaGrid from "@/components/MediaGrid.tsx";
 import UserProfileHeader from "@/components/UserProfileHeader.tsx";
 import Header from "../components/Header.tsx";
 
+{/* This Astro component handles user authentication, redirects if not authenticated, and uses the Layout to display the Header, UserProfileHeader, and MediaGrid components, all loaded on the client side. */}
+
 export const prerender = false;
 if (Astro.cookies.has("access_token") === false) {
   return Astro.redirect("/");

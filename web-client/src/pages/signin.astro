@@ -3,6 +3,8 @@ import Layout from "@/layouts/Layout.astro";
 import SigninSection from "@/components/Signin.tsx";
 import Header from "@/components/Header";
 
+{/* This Astro component checks for an active session and redirects to the profile page if the user is already logged in. If not, it renders a layout with a header and a sign-in section, both of which are loaded on the client side. */}
+
 export const prerender = false;
 if (Astro.cookies.has("access_token") === true) {
   return Astro.redirect("/profile");

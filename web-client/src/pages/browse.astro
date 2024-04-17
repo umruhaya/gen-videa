@@ -9,6 +9,7 @@ if (Astro.cookies.has("access_token") === false) {
   return Astro.redirect("/");
 }
 ---
+{/*This Astro component checks for a valid "access_token" and redirects to the home page if not found. It uses the 'Layout' and 'Header' components for consistent site styling and layout, and dynamically loads the 'PublicMediaGrid' and 'UserProfileHeader' on the client side.*/}
 
 <Layout title="Genvidea">
   <Header isLoggedIn={true} client:load />
