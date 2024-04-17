@@ -2,6 +2,7 @@
 import Layout from "@/layouts/Layout.astro";
 import HeroParallax from "@/components/ui/hero-parallax.tsx";
 import Header from "@/components/Header";
+import Globe from "@/components/Globe";
 
 const names = [
     "aladdin.png",
@@ -29,5 +30,6 @@ const prods = names.map(name => ({
 
     <main class="flex flex-col gap-8">
         <HeroParallax client:load products={prods} />
+        <Globe client:only />
     </main>
 </Layout>

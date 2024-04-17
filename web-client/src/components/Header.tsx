@@ -1,5 +1,8 @@
 import ModeToggle from "@/components/ModeToggle";
 import { Button } from "@/components/ui/button";
+import { queryOptions, useMutation } from "@tanstack/react-query";
+import { queryClient } from "@/store/query-client";
+import axios from "axios";
 
 type HeaderProps = {
     isLoggedIn: boolean;
@@ -8,13 +11,13 @@ type HeaderProps = {
 
 function Header({ isLoggedIn, showHomeButton = false }: HeaderProps = { isLoggedIn: true }) {
 
-    const handleLogout = async () => {
-        const response = await fetch("/api/auth/logout", {
-            method: "POST",
-        })
-            .catch(() => { })
-        window.location.reload();
-    }
+    const logout = useMutation({
+        mutationKey: ["logout"],
+        mutationFn: () => axios.post("/api/auth/logout"),
+        onSettled: () => {
+            window.location.reload()
+        }
+    }, queryClient)
 
     return (
         <header className="p-4 bg-secondary w-full">
@@ -36,7 +39,7 @@ function Header({ isLoggedIn, showHomeButton = false }: HeaderProps = { isLogged
                 {isLoggedIn && (
                     <Button
                         data-testid="logout-btn"
-                        onClick={handleLogout}
+                        onClick={() => logout.mutate()}
                         className="font-bold py-2 px-4 rounded"
                     >
                         Logout
