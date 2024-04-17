@@ -16,11 +16,13 @@ import { ToastAction } from "@/components/ui/toast"
 import { useToast } from "@/components/ui/use-toast"
 import { queryClient } from '@/store/query-client';
 import { Toaster } from "./ui/toaster"
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import Markdown from 'react-markdown'
 import { Textarea } from './ui/textarea';
 import Spinner from './Spinner';
+import { useMutation } from '@tanstack/react-query';
+import axios from 'axios';
 
 type VisionAIProps = {
     file_id: string;
@@ -81,6 +83,27 @@ export default function VisionAIDialog({ file_id, is_video, invalidate }: Vision
     const [completion, setCompletion] = useState("");
     const [isGenerating, setIsGenerating] = useState(false);
     const isOpen = useStore($isVisionAIDialogOpen)
+    const completionBoxInputRef = useRef<HTMLDivElement>(null)
+
+    const completionMutation = useMutation({
+        mutationKey: ["generate-multimodal-response"],
+        mutationFn: ({ file_ids, category, completion, client_locale_time }: CompletionMutationParams) => axios.post('/api/vision/create-mulitmodal-completion', {
+            file_ids,
+            category,
+            completion,
+            client_locale_time,
+        }),
+    }, queryClient)
+
+    function scrollToCompletionBoxBottom() {
+        const scrollElement = completionBoxInputRef.current;
+        if (scrollElement) {
+            scrollElement.scrollTo({
+                top: scrollElement.scrollHeight,
+                behavior: "auto"
+            });
+        }
+    }
 
     const handleStreaming = async () => {
         const response = await fetch("/api/vision/generate-multimodal-response", {
@@ -95,7 +118,9 @@ export default function VisionAIDialog({ file_id, is_video, invalidate }: Vision
         });
         const reader = response.body?.getReader();
         const decoder = new TextDecoder()
-        if (!reader) return
+        if (!reader) return "";
+
+        let localCompletion = "";
 
         const readableStream = new ReadableStream({
             async start(controller) {
@@ -103,10 +128,9 @@ export default function VisionAIDialog({ file_id, is_video, invalidate }: Vision
                     const { done, value } = await reader.read();
                     if (done) break;
                     const chunk = decoder.decode(value, { stream: true });
-                    console.log(chunk);
                     const text = extractData(chunk);
-                    console.log("extracted Data:\n", text);
                     // controller.enqueue(chunk);
+                    localCompletion += text;
                     setCompletion(c => c + text);
                 }
                 controller.close();
@@ -114,15 +138,28 @@ export default function VisionAIDialog({ file_id, is_video, invalidate }: Vision
             }
         })
 
-        await new Response(readableStream).text();
+        const tr = await new Response(readableStream).text();
+
+        return localCompletion;
     }
+
+    useEffect(() => {
+        scrollToCompletionBoxBottom();
+    }, [completion])
 
     const onGenerate = async () => {
         if(isGenerating) return;
         setIsGenerating(true);
+        setCompletion("");
         // Call the API to generate completion
         handleStreaming()
-            .then(() => {
+            .then((completion) => {
+                completionMutation.mutate({
+                    file_ids: [file_id],
+                    category: useCases[parseInt(activeUseCaseIdx)].title,
+                    completion,
+                    client_locale_time: new Date().toISOString(),
+                })
                 invalidate();
             })
             .catch(console.error)
@@ -135,7 +172,7 @@ export default function VisionAIDialog({ file_id, is_video, invalidate }: Vision
             <DialogTrigger>
                 <Button>Create Completion</Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="max-h-[80vh]">
                 <DialogHeader>
                     <DialogTitle>Vision AI</DialogTitle>
                     <DialogDescription>
@@ -158,8 +195,9 @@ export default function VisionAIDialog({ file_id, is_video, invalidate }: Vision
                         </TabsList>
                     </Tabs>
                     <div>
-                        <Label>Completion</Label>
-                        <div className="w-full h-24 max-h-32 p-2 overflow-y-scroll">
+                        <Label className="text-xl font-bold py-2">Completion</Label>
+                        <hr />
+                        <div ref={completionBoxInputRef} className="w-full h-64 max-h-32 p-2 overflow-y-scroll">
                             <Markdown>{completion}</Markdown>
                             {/* <Textarea
                                 className=''

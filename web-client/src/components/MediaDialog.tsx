@@ -65,7 +65,7 @@ export default function MediaViewDialog({ inValidate }:MediaDialogView) {
 
     return (
         <Dialog open={Boolean(mediaDialog)} onOpenChange={(open) => open || $mediaDialog.set(null)}>
-            <DialogContent className="max-w-4xl max-h-[80%] overflow-y-scroll">
+            <DialogContent className="md:max-w-4xl max-w-sm overflow-y-scroll">
                 <DialogHeader>
                     <DialogTitle className="text-4xl">
                         {mediaDialog?.title.toUpperCase()}
@@ -111,8 +111,8 @@ export default function MediaViewDialog({ inValidate }:MediaDialogView) {
                                             {visibilityMutation.isPending ? <Spinner /> : `Change Visibility to ${newVisbility}`}
                                         </Button>
                                     </AlertDialogButton>
+                                    {mediaDialog?.isVideo && <VisionAIDialog file_id={mediaDialog?.fileId} is_video={mediaDialog.isVideo} invalidate={() => {}} />}
                                 </div>
-                                <VisionAIDialog file_id={mediaDialog?.fileId} is_video={mediaDialog.isVideo} invalidate={() => {}} />
                             </div>
                         )}
                     </DialogDescription>

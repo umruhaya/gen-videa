@@ -22,7 +22,19 @@ import {
     TabsList,
     TabsTrigger,
 } from "@/components/ui/tabs"
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 import VisionAITab from "./VisionAITab";
+import { Button } from "./ui/button";
+import { useState } from "react";
+import { Label } from "./ui/label";
 
 type UserMedia = {
     uuid: string
@@ -97,6 +109,13 @@ export default function MediaGrid() {
         queryFn: () => axios.get("/api/files/list-user-uploads").then(res => res.data),
     }, queryClient);
 
+    const [contentTypeFilter, setContentTypeFilter] = useState<"all" | "video" | "image">("all");
+    const [visibilityFilter, setVisibilityFilter] = useState<"all" | "public" | "private">("all");
+
+    const filteredUploads = userUploadsData
+        ?.filter(item => contentTypeFilter === "all" || item.content_type.includes(contentTypeFilter))
+        ?.filter(item => visibilityFilter === "all" || item.is_public === (visibilityFilter === "public"));
+
     const tabs = [
         {
             title: "Generation",
@@ -104,8 +123,8 @@ export default function MediaGrid() {
             content: <UserMediaGrid
                 data={systemGenerationsData}
                 header={
-                    <div className="w-full flex justify-between my-4">
-                        <h2 className="my-4 text-2xl font-bold p-8">Generative Gallery</h2>
+                    <div className="w-full flex justify-between mt-4 p-8">
+                        <h2 className="my-4 text-2xl font-bold">Generative Gallery</h2>
                         <div className="mx-4 my-auto">
                             <DalleGenerateDialog invalidate={refetchGenerations} />
                         </div>
@@ -117,14 +136,50 @@ export default function MediaGrid() {
             title: "My Uploads",
             value: "userUploads",
             content: <UserMediaGrid
-                data={userUploadsData}
+                data={filteredUploads}
                 header={
-                    <div className="w-full flex justify-between my-4">
-                        <h2 className="my-4 text-2xl font-bold p-8">My Uploads</h2>
-                        <div className="mx-4 my-auto">
-                            <FileUploadDialog invalidate={refetchUploads} />
+                    <div className="flex flex-col gap-4 p-8 mt-4">
+                        <div className="w-full flex justify-between">
+                            <h2 className="my-4 text-2xl font-bold">My Uploads</h2>
+                            <div className="mx-4 my-auto flex gap-2 items-center">
+                                <FileUploadDialog invalidate={refetchUploads} />
+                            </div>
+                        </div >
+                        <div className="flex gap-4">
+                            <div>
+                                <Label>Visibility</Label>
+                                <Select value={visibilityFilter} onValueChange={setVisibilityFilter}>
+                                    <SelectTrigger className="w-[180px]">
+                                        <SelectValue placeholder="Filter by Visibility" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectGroup>
+                                            <SelectLabel>Visibility</SelectLabel>
+                                            <SelectItem value="all">All</SelectItem>
+                                            <SelectItem value="public">Public</SelectItem>
+                                            <SelectItem value="private">Private</SelectItem>
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div>
+                                <Label>Media Type</Label>
+                                <Select value={contentTypeFilter} onValueChange={setContentTypeFilter}>
+                                    <SelectTrigger className="w-[180px]">
+                                        <SelectValue placeholder="Filter by Content Type" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectGroup>
+                                            <SelectLabel>Media Type</SelectLabel>
+                                            <SelectItem value="all">All</SelectItem>
+                                            <SelectItem value="image">Images</SelectItem>
+                                            <SelectItem value="video">Videos</SelectItem>
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
+                            </div>
                         </div>
-                    </div >
+                    </div>
                 } />
         },
         {
@@ -137,11 +192,18 @@ export default function MediaGrid() {
     return (
         <div>
             <Tabs defaultValue="system-generations">
-                <TabsList className="grid w-full grid-cols-3">
-                    <TabsTrigger value="system-generations">Dalle Generations</TabsTrigger>
-                    <TabsTrigger value="user-uploads">User Uploads</TabsTrigger>
-                    <TabsTrigger value="vision-ai">Vision AI</TabsTrigger>
-                </TabsList>
+                <div className="flex flex-col-reverse mt-4 gap-2 md:gap-12 content-center md:flex-row">
+                    <TabsList className="grid w-full grid-cols-3">
+                        <TabsTrigger value="system-generations">Dalle Generations</TabsTrigger>
+                        <TabsTrigger value="user-uploads">User Uploads</TabsTrigger>
+                        <TabsTrigger value="vision-ai">Vision AI</TabsTrigger>
+                    </TabsList>
+                    <a href="/browse">
+                        <Button variant="secondary" size="sm">
+                            Public Dalle Generations
+                        </Button>
+                    </a>
+                </div>
                 <TabsContent value="system-generations">
                     {tabs[0].content}
                 </TabsContent>

@@ -24,6 +24,7 @@ import { Toaster } from './ui/toaster';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import Spinner from '@/components/Spinner';
+import { useEffect } from 'react';
 
 
 type Props = {
@@ -78,13 +79,16 @@ export default function UserSettingsDialog({ invalidate }: Props) {
         register,
         handleSubmit,
         formState: { errors },
+        setValue,
     } = useForm({
         resolver: zodResolver(formSchema),
-        defaultValues: {
-            username: settingsData?.username,
-            bio: settingsData?.bio,
-        }
     });
+
+    useEffect(() => {
+        if (!settingsData) return;
+        setValue("username", settingsData.username)
+        setValue("bio", settingsData.bio)
+    }, [settingsData])
 
     const onSubmit = (data: Partial<UserSettingsData>) => {
         settingsMutation.mutate(data);
@@ -109,29 +113,29 @@ export default function UserSettingsDialog({ invalidate }: Props) {
 
     return (
         <>
-            <Dialog open={isOpen} onOpenChange={(open : any) => $isUserSettingsDialogOpen.set(open)}>
-            <DialogTrigger>
-                <SettingsIcon size={24} />
-            </DialogTrigger>
-            <DialogContent>
-                <DialogHeader>
-                    <DialogTitle>User Settings</DialogTitle>
-                    <DialogDescription>
-                        Update your username
-                    </DialogDescription>
-                </DialogHeader>
-                <Label htmlFor="username">New Username</Label>
-                <Input id="username" {...register("username")} placeholder='FunkyRabbit' />
-                <Label htmlFor="bio">New Bio</Label>
-                <Input id="bio" {...register("bio")} placeholder='Hey There! I am using Genvidea' />
-                <DialogFooter>
-                    <Button type="submit" onClick={handleSubmit(onSubmit, onInvalidSubmit)}>
-                        {settingsMutation.isPending ? <Spinner /> : "Update"}
-                    </Button>
-                </DialogFooter>
-            </DialogContent>
-            <Toaster />
-        </Dialog>
+            <Dialog open={isOpen} onOpenChange={(open: any) => $isUserSettingsDialogOpen.set(open)}>
+                <DialogTrigger>
+                    <SettingsIcon size={24} />
+                </DialogTrigger>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>User Settings</DialogTitle>
+                        <DialogDescription>
+                            Update your username
+                        </DialogDescription>
+                    </DialogHeader>
+                    <Label htmlFor="username">New Username</Label>
+                    <Input id="username" {...register("username")} placeholder='FunkyRabbit' />
+                    <Label htmlFor="bio">New Bio</Label>
+                    <Input id="bio" {...register("bio")} placeholder='Hey There! I am using Genvidea' />
+                    <DialogFooter>
+                        <Button type="submit" onClick={handleSubmit(onSubmit, onInvalidSubmit)}>
+                            {settingsMutation.isPending ? <Spinner /> : "Update"}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+                <Toaster />
+            </Dialog>
         </>
     );
 }

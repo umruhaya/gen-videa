@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { useQuery, QueryClient, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import UserSettingsDialog from "./UserSettingsDialog";
 import {
   Dialog,
@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Spinner from "@/components/Spinner";
 import { IconPencil } from "@tabler/icons-react";
+import { queryClient } from "@/store/query-client";
 
 const queryFn = async () => {
   const response = await fetch("");
@@ -27,8 +28,6 @@ type UserSettingsData = {
   profile_picture?: string;
   bio?: string;
 };
-
-const queryClient = new QueryClient();
 
 const baselink = "https://storage.googleapis.com/static-web-pages/genv-avatars";
 
@@ -82,11 +81,6 @@ export default function UserProfileHeader() {
           <hr className="my-2" />
           <div className="flex gap-4 items-center">
             <UserSettingsDialog invalidate={refetchUserSettings} />
-            <a href="/browse">
-              <Button variant="secondary" size="sm">
-                Public
-              </Button>
-            </a>
           </div>
         </div>
       </section>

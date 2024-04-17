@@ -4,8 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import MediaViewDialog from '@/components/MediaDialog';
 import { $mediaDialog } from "@/store";
+import { queryClient } from '@/store/query-client';
 import { IconSearch } from "@tabler/icons-react";
-import { useQuery, QueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import {
   IconArrowWaveRightUp,
   IconBoxAlignRightFilled,
@@ -45,8 +46,6 @@ const icons = [
   <IconBoxAlignTopLeft className="h-4 w-4 text-neutral-500" />,
   <IconBoxAlignRightFilled className="h-4 w-4 text-neutral-500" />,
 ];
-
-const queryClient = new QueryClient();
 
 export default function PublicMediaGrid() {
   const { data: publicUploadsData, error } = useQuery<PublicMedia[]>({ queryKey: ["publicUploads"], queryFn: publicUploadsQueryFn }, queryClient);
