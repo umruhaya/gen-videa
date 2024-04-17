@@ -36,6 +36,7 @@ const formSchema = z.object({
 
 
 export default function SignUpComponent() {
+    // Sets up the form using react-hook-form with Zod for complex validations, including multifaceted password rules.
     // 1. Define your form.
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -46,8 +47,10 @@ export default function SignUpComponent() {
         },
     })
 
+    // Watches for changes to the password input to dynamically validate and provide user feedback.
     const watchedPassword = form.watch("password")
 
+    // Submits form data to the server and handles the response to redirect or display errors based on server feedback.
     // 2. Define a submit handler.
     async function onValidSubmit(values: z.infer<typeof formSchema>, e?: BaseSyntheticEvent<object, any, any>) {
 
@@ -82,6 +85,7 @@ export default function SignUpComponent() {
         }
     }
 
+    // Displays error messages if form validation fails on submission attempt.
     function onInvalidSubmit(errors: FieldErrors<z.infer<typeof formSchema>>) {
         form.setError("root", {
             type: "manual",

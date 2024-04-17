@@ -32,6 +32,7 @@ export default function SignInComponent() {
     const { toast } = useToast()
 
 
+    // Initializes form handling with Zod validation schema and default form values.
     // 1. Define your form.
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -41,6 +42,7 @@ export default function SignInComponent() {
         },
     })
 
+    // Displays a toast message upon successful account creation using URL query parameters.
     useEffect(() => {
         const searchParams = new URLSearchParams(window.location.search)
         const signupSuccess = searchParams.get("signup") === "success"
@@ -55,6 +57,7 @@ export default function SignInComponent() {
         }
     }, [])
 
+    // Handles form submission for valid inputs, making a POST request with form data.
     // 2. Define a submit handler.
     async function onValidSubmit(values: z.infer<typeof formSchema>, e?: BaseSyntheticEvent<object, any, any>) {
 
@@ -70,6 +73,7 @@ export default function SignInComponent() {
 
         const data = await response.json()
 
+        // Reacts to various HTTP response statuses to manage login feedback.
         switch (response.status) {
             case 200:
                 window.location.reload()

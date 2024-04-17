@@ -22,7 +22,7 @@ const publicUploadsQueryFn = async () => {
   if (response.ok) {
     return response.json();
   }
-  throw new Error("Failed to fetch public uploads");
+  throw new Error("Failed to fetch public uploads"); // Throws an error if the fetch operation fails.
 };
 
 type PublicMedia = {
@@ -48,11 +48,13 @@ const icons = [
 ];
 
 export default function PublicMediaGrid() {
+  // Fetches public media data using a React Query hook, handling the loading state and errors.
   const { data: publicUploadsData, error } = useQuery<PublicMedia[]>({ queryKey: ["publicUploads"], queryFn: publicUploadsQueryFn }, queryClient);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredUploads, setFilteredUploads] = useState<PublicMedia[]>([]);
 
+  // Filters the uploads based on the search term input by the user.
   useEffect(() => {
     if (publicUploadsData) {
       const filteredData = publicUploadsData.filter(item =>
@@ -63,6 +65,7 @@ export default function PublicMediaGrid() {
   }, [searchTerm, publicUploadsData]);
 
   if (error) {
+    // Displays an error message if there's a problem fetching data.
     return <div>Error loading public uploads.</div>;
   }
 

@@ -5,12 +5,13 @@ import { queryClient } from "@/store/query-client";
 import axios from "axios";
 
 type HeaderProps = {
-    isLoggedIn: boolean;
-    showHomeButton?: boolean; 
+    isLoggedIn: boolean; // Determines if the user is logged in to show appropriate UI elements
+    showHomeButton?: boolean; // Optional prop to display a Home button if needed
 }
 
 function Header({ isLoggedIn, showHomeButton = false }: HeaderProps = { isLoggedIn: true }) {
 
+    // Hook to handle user logout functionality with a post request and page reload upon completion
     const logout = useMutation({
         mutationKey: ["logout"],
         mutationFn: () => axios.post("/api/auth/logout"),
@@ -26,6 +27,7 @@ function Header({ isLoggedIn, showHomeButton = false }: HeaderProps = { isLogged
                 <div className="flex items-center space-x-4">
                 <ModeToggle />
                 {showHomeButton && (
+                    {/* Conditional rendering of the Home button based on the `showHomeButton` prop*/}
                     <a href="/">
                         <Button
                             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"

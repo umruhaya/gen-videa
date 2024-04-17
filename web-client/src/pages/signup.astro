@@ -3,6 +3,8 @@ import Layout from "@/layouts/Layout.astro";
 import SignupSection from "@/components/Signup.tsx";
 import Header from "@/components/Header.tsx";
 
+{/* Redirects logged-in users to the profile page. For others, displays a signup page with a header that includes a home button, both loaded client-side. */}
+
 export const prerender = false;
 if (Astro.cookies.has("access_token") === true) {
   return Astro.redirect("/profile");

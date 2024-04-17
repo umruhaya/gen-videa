@@ -30,6 +30,7 @@ type VisionAIProps = {
     invalidate: () => void
 }
 
+// Example use cases for generating AI-driven responses.
 const useCases = [
     {
         title: "Describe Video Content",
@@ -55,6 +56,7 @@ type UseCaseButtonProps = {
     onClick: () => void;
 }
 
+// Button component for selecting AI use cases.
 const UseCaseButton = ({ isSelected, title, description, onClick }: UseCaseButtonProps) => {
     return (
         <div onClick={onClick} className={"w-full h-24 flex flex-col border border-solid border-black cursor-pointer rounded-lg p-2"}>
@@ -85,6 +87,7 @@ export default function VisionAIDialog({ file_id, is_video, invalidate }: Vision
     const isOpen = useStore($isVisionAIDialogOpen)
     const completionBoxInputRef = useRef<HTMLDivElement>(null)
 
+    // Mutation to handle streaming responses from the server.
     const completionMutation = useMutation({
         mutationKey: ["generate-multimodal-response"],
         mutationFn: ({ file_ids, category, completion, client_locale_time }: CompletionMutationParams) => axios.post('/api/vision/create-mulitmodal-completion', {
@@ -95,6 +98,7 @@ export default function VisionAIDialog({ file_id, is_video, invalidate }: Vision
         }),
     }, queryClient)
 
+    // Function to automatically scroll to the bottom of the completion box.
     function scrollToCompletionBoxBottom() {
         const scrollElement = completionBoxInputRef.current;
         if (scrollElement) {
@@ -105,6 +109,7 @@ export default function VisionAIDialog({ file_id, is_video, invalidate }: Vision
         }
     }
 
+    // Handle the real-time streaming of text from the server to the client.
     const handleStreaming = async () => {
         const response = await fetch("/api/vision/generate-multimodal-response", {
             method: "POST",

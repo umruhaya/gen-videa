@@ -20,6 +20,7 @@ type VisionCompletions = {
 }
 
 export default function VisionAITab() {
+    // Fetches Vision completions from the server and updates the UI state accordingly.
 
     const { data: completions, isLoading,  refetch: refetchCompletions } = useQuery<VisionCompletions[]>({
         queryKey: ["visionCompletions"],
