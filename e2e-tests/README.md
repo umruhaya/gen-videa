@@ -18,8 +18,8 @@ pnpm dev
 ```bash
 # install browser for playwright
 pnpm exec playwright install
-# run the test cases
-pnpm exec playwright test
+# run the test cases in the Webkit Browser with UI
+pnpm exec playwright test --project=webkit --ui
 ```
 
 nside that directory, you can run several commands:

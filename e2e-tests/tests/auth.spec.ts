@@ -48,7 +48,7 @@ test.describe("Sign In", () => {
         // Click on Sign In Button
         await page.getByTestId("signin-btn").click();
         // Wait for URL to change to dashboard
-        await page.waitForURL("http://localhost:3000/dashboard", { timeout: 5 * 1000 });
+        await page.waitForURL("http://localhost:3000/profile", { timeout: 5 * 1000 });
     })
 
     test("should logout after signing in", async ({ page }) => {
@@ -59,7 +59,7 @@ test.describe("Sign In", () => {
         // Click on Sign In Button
         await page.getByTestId("signin-btn").click();
         // Wait for URL to change to dashboard
-        await page.waitForURL("http://localhost:3000/dashboard", { timeout: 5 * 1000 });
+        await page.waitForURL("http://localhost:3000/profile", { timeout: 5 * 1000 });
         // Click on Logout Button
         await page.getByTestId("logout-btn").click();
     })
