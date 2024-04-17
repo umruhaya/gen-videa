@@ -22,6 +22,7 @@ import {
     TabsList,
     TabsTrigger,
 } from "@/components/ui/tabs"
+import VisionAITab from "./VisionAITab";
 
 type UserMedia = {
     uuid: string
@@ -126,20 +127,29 @@ export default function MediaGrid() {
                     </div >
                 } />
         },
+        {
+            title: "Vision AI",
+            value: "visionAI",
+            content: <VisionAITab />
+        }
     ]
 
     return (
         <div>
             <Tabs defaultValue="system-generations">
-                <TabsList className="grid w-full grid-cols-2">
+                <TabsList className="grid w-full grid-cols-3">
                     <TabsTrigger value="system-generations">Dalle Generations</TabsTrigger>
                     <TabsTrigger value="user-uploads">User Uploads</TabsTrigger>
+                    <TabsTrigger value="vision-ai">Vision AI</TabsTrigger>
                 </TabsList>
                 <TabsContent value="system-generations">
                     {tabs[0].content}
                 </TabsContent>
                 <TabsContent value="user-uploads">
                     {tabs[1].content}
+                </TabsContent>
+                <TabsContent value="vision-ai">
+                    {tabs[2].content}
                 </TabsContent>
             </Tabs>
 

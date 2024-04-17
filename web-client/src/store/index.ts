@@ -26,6 +26,8 @@ export const $isDalleGenerateDialogOpen = atom(false)
 //store for the open state of the user settings dialog
 export const $isUserSettingsDialogOpen = atom(false);
 
+export const $isVisionAIDialogOpen = atom(false);
+
 type MediaDialogView = {
     fileId: string;
     isPublic: boolean;

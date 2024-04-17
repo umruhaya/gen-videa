@@ -77,7 +77,7 @@ export default function UserProfileHeader() {
           </div>
         </div>
         <div>
-          <button className="text-sm font-semibold py-1 px-4 bg-zinc-800 rounded-3xl">@{data?.username}</button>
+          <Button className="text-sm font-semibold py-1 h-6 px-4 bg-zinc-400 dark:bg-zinc-800 text-white rounded-3xl">@{data?.username}</Button>
           {data?.bio && <p className="italic mt-2">{data?.bio}</p>}
           <hr className="my-2" />
           <div className="flex gap-4 items-center">

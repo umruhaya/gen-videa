@@ -16,6 +16,7 @@ import { useMutation } from '@tanstack/react-query';
 import { IconTrash } from '@tabler/icons-react';
 import axios from "axios";
 import { queryClient } from '@/store/query-client';
+import VisionAIDialog from '@/components/VisionAIDialog';
 
 type VisibilityMutationParams = {
     fileId: string;
@@ -111,6 +112,7 @@ export default function MediaViewDialog({ inValidate }:MediaDialogView) {
                                         </Button>
                                     </AlertDialogButton>
                                 </div>
+                                <VisionAIDialog file_id={mediaDialog?.fileId} is_video={mediaDialog.isVideo} invalidate={() => {}} />
                             </div>
                         )}
                     </DialogDescription>
