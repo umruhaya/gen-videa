@@ -1,9 +1,12 @@
 import { test, expect } from "@playwright/test";
 
-test.describe("Sign In", () => {
+// const BASE_URL = "http://localhost:3000";
+const BASE_URL = "http://web.genvidea.com";
+
+test.describe("Auth E2E Tests", () => {
 
     test.beforeEach(async ({ page }) => {
-        await page.goto("http://localhost:3000/signin");
+        await page.goto(`${BASE_URL}/signin`);
     })
 
     test("should not sign in due to empty email and password", async ({ page }) => {
@@ -48,7 +51,7 @@ test.describe("Sign In", () => {
         // Click on Sign In Button
         await page.getByTestId("signin-btn").click();
         // Wait for URL to change to dashboard
-        await page.waitForURL("http://localhost:3000/profile", { timeout: 5 * 1000 });
+        await page.waitForURL(`${BASE_URL}/profile`, { timeout: 5 * 1000 });
     })
 
     test("should logout after signing in", async ({ page }) => {
@@ -59,7 +62,7 @@ test.describe("Sign In", () => {
         // Click on Sign In Button
         await page.getByTestId("signin-btn").click();
         // Wait for URL to change to dashboard
-        await page.waitForURL("http://localhost:3000/profile", { timeout: 5 * 1000 });
+        await page.waitForURL(`${BASE_URL}/profile`, { timeout: 5 * 1000 });
         // Click on Logout Button
         await page.getByTestId("logout-btn").click();
     })

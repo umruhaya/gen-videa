@@ -1,9 +1,12 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('Mode Toggle', () => {
+// const BASE_URL = "http://localhost:3000";
+const BASE_URL = "http://web.genvidea.com";
+
+test.describe('UI Tests', () => {
   // Assuming your app is served on localhost:3000, adjust if necessary
   test.beforeEach(async ({ page }) => {
-    await page.goto('http://localhost:3000');
+    await page.goto(BASE_URL);
   });
 
   test('should switch to dark mode', async ({ page }) => {
