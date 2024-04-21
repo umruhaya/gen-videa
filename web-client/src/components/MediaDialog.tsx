@@ -65,7 +65,7 @@ export default function MediaViewDialog({ inValidate }:MediaDialogView) {
 
     return (
         <Dialog open={Boolean(mediaDialog)} onOpenChange={(open) => open || $mediaDialog.set(null)}>
-            <DialogContent className="md:max-w-4xl max-w-sm overflow-y-scroll">
+            <DialogContent className="md:max-w-4xl max-w-sm overflow-y-scroll max-h-[90vh]">
                 <DialogHeader>
                     <DialogTitle className="text-4xl">
                         {mediaDialog?.title.toUpperCase()}

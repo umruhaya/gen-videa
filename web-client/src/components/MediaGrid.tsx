@@ -148,7 +148,7 @@ export default function MediaGrid() {
                         <div className="flex gap-4">
                             <div>
                                 <Label>Visibility</Label>
-                                <Select value={visibilityFilter} onValueChange={setVisibilityFilter}>
+                                <Select value={visibilityFilter} onValueChange={setVisibilityFilter as any}>
                                     <SelectTrigger className="w-[180px]">
                                         <SelectValue placeholder="Filter by Visibility" />
                                     </SelectTrigger>
@@ -164,7 +164,7 @@ export default function MediaGrid() {
                             </div>
                             <div>
                                 <Label>Media Type</Label>
-                                <Select value={contentTypeFilter} onValueChange={setContentTypeFilter}>
+                                <Select value={contentTypeFilter} onValueChange={setContentTypeFilter as any}>
                                     <SelectTrigger className="w-[180px]">
                                         <SelectValue placeholder="Filter by Content Type" />
                                     </SelectTrigger>

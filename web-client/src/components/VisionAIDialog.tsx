@@ -30,11 +30,34 @@ type VisionAIProps = {
     invalidate: () => void
 }
 
+const videoChapterPrompt = `Chapterize the video content by grouping the video content into chapters and providing summary for each chapter. Please only capture key events and highlights. If you are not sure about any info, please do not make it up. Be Creative with the Chapter Names and Make use appropriate time stamps according to the video size. Return the result in markdown format with chapter names in the following markdown like format:
+
+### Chapter 1: [Chapter Name Here]
+
+**Timecode:** _00:00-00:16_
+
+#### Chapter Summary:
+
+The video opens with [further video details]
+
+### Chapter 2: [Chapter Name Here]
+
+**Timecode:** _00:16-00:39_
+
+#### Chapter Summary:
+
+The video shifts its focus to [further details]
+
+
+
+Go ahead and start chapterizing the video content.
+`
+
 const useCases = [
     {
         title: "Describe Video Content",
         description: "Generate a description of an video",
-        prompt: "Generate a description of an video",
+        prompt: "Write a detailed description for this video",
     },
     {
         title: "Summarize Video",
@@ -44,8 +67,13 @@ const useCases = [
     {
         title: "Hashtags for a video",
         description: "Generate hashtags for a video ad",
-        prompt: "Generate hashtags for a video ad",
+        prompt: "Generate 5-10 hashtags that relates to the content video. Try use more popular and engaging terms if possible e.g. #Viral Do not make up things not related to the video.",
     },
+    {
+        title: "Create Chapter Summary",
+        description: "Group the video content into chapters with summary",
+        prompt: videoChapterPrompt,
+    }
 ];
 
 type UseCaseButtonProps = {
@@ -53,15 +81,6 @@ type UseCaseButtonProps = {
     title: string;
     description: string;
     onClick: () => void;
-}
-
-const UseCaseButton = ({ isSelected, title, description, onClick }: UseCaseButtonProps) => {
-    return (
-        <div onClick={onClick} className={"w-full h-24 flex flex-col border border-solid border-black cursor-pointer rounded-lg p-2"}>
-            <h3 className="text-lg">{title}</h3>
-            <p>{description}</p>
-        </div>
-    )
 }
 
 type CompletionMutationParams = {
@@ -148,12 +167,13 @@ export default function VisionAIDialog({ file_id, is_video, invalidate }: Vision
     }, [completion])
 
     const onGenerate = async () => {
-        if(isGenerating) return;
+        if (isGenerating) return;
         setIsGenerating(true);
         setCompletion("");
         // Call the API to generate completion
         handleStreaming()
             .then((completion) => {
+                console.debug(completion);
                 completionMutation.mutate({
                     file_ids: [file_id],
                     category: useCases[parseInt(activeUseCaseIdx)].title,
@@ -172,7 +192,7 @@ export default function VisionAIDialog({ file_id, is_video, invalidate }: Vision
             <DialogTrigger>
                 <Button>Create Completion</Button>
             </DialogTrigger>
-            <DialogContent className="max-h-[80vh]">
+            <DialogContent className="max-h-[80vh] max-w-[60vw]">
                 <DialogHeader>
                     <DialogTitle>Vision AI</DialogTitle>
                     <DialogDescription>
@@ -183,7 +203,7 @@ export default function VisionAIDialog({ file_id, is_video, invalidate }: Vision
                     <h2>Select a Use Case</h2>
                     {/* https://www.radix-ui.com/primitives/docs/components/tabs#api-reference */}
                     <Tabs value={activeUseCaseIdx} onValueChange={setActiveUseCaseIdx} className="" orientation="vertical">
-                        <TabsList className="h-full flex flex-col" data-orientation="vertical">
+                        <TabsList className="h-full flex flex-col my-4" data-orientation="vertical">
                             {
                                 useCases.map((useCase, idx) => (
                                     <TabsTrigger key={idx} value={idx.toString()} className="px-4 py-2 w-full justify-start">
@@ -198,14 +218,16 @@ export default function VisionAIDialog({ file_id, is_video, invalidate }: Vision
                         <Label className="text-xl font-bold py-2">Completion</Label>
                         <hr />
                         <div ref={completionBoxInputRef} className="w-full h-64 max-h-32 p-2 overflow-y-scroll">
-                            <Markdown>{completion}</Markdown>
+                            <div className="prose">
+                                <Markdown>{completion}</Markdown>
+                            </div>
                             {/* <Textarea
                                 className=''
                                 value={completion}
                                 readOnly
                                 /> */}
                         </div>
-                        
+
                         <Button onClick={onGenerate} disabled={isGenerating}>
                             {isGenerating ? <Spinner /> : "Generate"}
                         </Button>
